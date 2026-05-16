@@ -2,6 +2,11 @@ from collections import defaultdict
 
 from pokemane.models import Pokemon, PokemonSet
 from pokemane.services.stats import get_effective_pokemon
+from pokemane.services.type_matchups import (
+    TYPE_NAMES,
+    calculate_defensive_multiplier,
+)
+from pokemane.services.type_styles import get_type_class
 
 
 MATCHUP_METHOD_ORDER = [
@@ -291,11 +296,175 @@ def build_virtual_target_diagnosis(good_matchups, bad_matchups):
         "holes": holes,
     }
 
+def build_type_display_item(type_name):
+    """
+    診断画面でタイプ名をタイプ色付きで表示するためのデータを作る。
+    """
+    return {
+        "name": type_name,
+        "type_class": get_type_class(type_name),
+    }
+
+def build_type_display_item(type_name):
+    """
+    診断画面でタイプ名をタイプ色付きで表示するためのデータを作る。
+    """
+    return {
+        "name": type_name,
+        "type_class": get_type_class(type_name),
+    }
+
+def build_defensive_type_coverage(ordered_sets):
+    """
+    防御側タイプ一貫を診断する。
+
+    等倍以上：
+    登録済みポケモン全員に等倍以上で通る攻撃タイプ。
+    ただし、抜群以上に分類されるタイプは表示上除外する。
+
+    抜群以上：
+    登録済みポケモン全員に抜群以上で通る攻撃タイプ。
+
+    要注意：
+    登録済みポケモン全員には一貫していないが、
+    3体以上に抜群を取れる攻撃タイプ。
+    ただし、抜群以上に表示されるタイプは除外する。
+    """
+    if not ordered_sets:
+        return {
+            "neutral_or_more": [],
+            "super_effective_all": [],
+            "caution": [],
+            "ground_immunes": [],
+            "electric_immunes": [],
+            "details": [],
+        }
+
+    # ここでは、判定用として文字列のまま扱う
+    neutral_or_more_names = []
+    super_effective_all_names = []
+    caution = []
+    details = []
+
+    ground_immunes = []
+    electric_immunes = []
+
+    for attack_type in TYPE_NAMES:
+        rows = []
+        neutral_or_more_count = 0
+        super_effective_count = 0
+        immune_count = 0
+
+        for item in ordered_sets:
+            pokemon_set = item["set"]
+            mega_active = item["mega_active"]
+
+            effective_pokemon = get_effective_pokemon(
+                pokemon_set,
+                mega_active=mega_active,
+            )
+
+            multiplier = calculate_defensive_multiplier(
+                attack_type,
+                effective_pokemon,
+                pokemon_set.ability_name,
+            )
+
+            if multiplier >= 1:
+                neutral_or_more_count += 1
+
+            if multiplier >= 2:
+                super_effective_count += 1
+
+            if multiplier == 0:
+                immune_count += 1
+
+                if attack_type == "じめん":
+                    ground_immunes.append(
+                        {
+                            "set": pokemon_set,
+                            "pokemon": effective_pokemon,
+                        }
+                    )
+
+                if attack_type == "でんき":
+                    electric_immunes.append(
+                        {
+                            "set": pokemon_set,
+                            "pokemon": effective_pokemon,
+                        }
+                    )
+
+            rows.append(
+                {
+                    "set": pokemon_set,
+                    "pokemon": effective_pokemon,
+                    "multiplier": multiplier,
+                }
+            )
+
+        member_count = len(ordered_sets)
+
+        is_neutral_or_more_all = neutral_or_more_count == member_count
+        is_super_effective_all = super_effective_count == member_count
+
+        if is_neutral_or_more_all:
+            neutral_or_more_names.append(attack_type)
+
+        if is_super_effective_all:
+            super_effective_all_names.append(attack_type)
+
+        details.append(
+            {
+                "attack_type": attack_type,
+                "neutral_or_more_count": neutral_or_more_count,
+                "super_effective_count": super_effective_count,
+                "immune_count": immune_count,
+                "rows": rows,
+            }
+        )
+
+    super_effective_all_set = set(super_effective_all_names)
+
+    # 抜群以上は等倍以上にも含まれるため、表示上は等倍以上から除外する
+    neutral_or_more_names = [
+        type_name
+        for type_name in neutral_or_more_names
+        if type_name not in super_effective_all_set
+    ]
+
+    for row in details:
+        attack_type = row["attack_type"]
+
+        if attack_type in super_effective_all_set:
+            continue
+
+        if row["super_effective_count"] >= 3:
+            caution.append(
+                {
+                    "name": attack_type,
+                    "type_class": get_type_class(attack_type),
+                    "super_effective_count": row["super_effective_count"],
+                }
+            )
+
+    return {
+        "neutral_or_more": [
+            build_type_display_item(type_name)
+            for type_name in neutral_or_more_names
+        ],
+        "super_effective_all": [
+            build_type_display_item(type_name)
+            for type_name in super_effective_all_names
+        ],
+        "caution": caution,
+        "ground_immunes": ground_immunes,
+        "electric_immunes": electric_immunes,
+        "details": details,
+    }
+
 
 def diagnose_party_from_ordered_sets(ordered_sets):
-    """
-    診断処理の本体。
-    """
     party_summary = build_party_summary(ordered_sets)
     good_matchups = build_good_matchups(ordered_sets)
     bad_matchups = build_bad_matchups(ordered_sets)
@@ -304,6 +473,7 @@ def diagnose_party_from_ordered_sets(ordered_sets):
         good_matchups,
         bad_matchups,
     )
+    defensive_type_coverage = build_defensive_type_coverage(ordered_sets)
 
     return {
         "party_summary": party_summary,
@@ -311,8 +481,8 @@ def diagnose_party_from_ordered_sets(ordered_sets):
         "good_matchups": good_matchups,
         "bad_matchups": bad_matchups,
         "virtual_target_diagnosis": virtual_target_diagnosis,
+        "defensive_type_coverage": defensive_type_coverage,
     }
-
 
 def diagnose_party(party):
     """

@@ -174,9 +174,75 @@
     </div>
 </div>
 
-<div class="diagnosis-card muted-diagnosis-card">
+<div class="diagnosis-card">
     <h3>6. 防御側タイプ一貫</h3>
-    <p>次の工程で実装します。</p>
+
+    <div class="type-coverage-block">
+        <h4>等倍以上</h4>
+        <div class="diagnosis-chip-row">
+            {% for type_item in diagnosis.defensive_type_coverage.neutral_or_more %}
+                <span class="type-badge {{ type_item.type_class }}">{{ type_item.name }}</span>
+            {% empty %}
+                <span class="ok-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="type-coverage-block">
+        <h4>抜群以上</h4>
+        <div class="diagnosis-chip-row">
+            {% for type_item in diagnosis.defensive_type_coverage.super_effective_all %}
+                <span class="type-badge {{ type_item.type_class }}">{{ type_item.name }}</span>
+            {% empty %}
+                <span class="ok-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="type-coverage-block">
+        <h4>要注意</h4>
+        <div class="diagnosis-chip-row">
+            {% for row in diagnosis.defensive_type_coverage.caution %}
+                <span class="type-badge {{ row.type_class }}">
+                    {{ row.name }}：{{ row.super_effective_count }}体に抜群
+                </span>
+            {% empty %}
+                <span class="ok-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="type-coverage-block">
+        <h4>地面無効</h4>
+        <div class="diagnosis-chip-row">
+            {% for item in diagnosis.defensive_type_coverage.ground_immunes %}
+                <span class="target-chip">
+                    {% if item.pokemon.icon_image %}
+                        <img src="{{ item.pokemon.icon_image.url }}" alt="{{ item.pokemon.name }}">
+                    {% endif %}
+                    {{ item.pokemon.name }}
+                </span>
+            {% empty %}
+                <span class="danger-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="type-coverage-block">
+        <h4>電気無効</h4>
+        <div class="diagnosis-chip-row">
+            {% for item in diagnosis.defensive_type_coverage.electric_immunes %}
+                <span class="target-chip">
+                    {% if item.pokemon.icon_image %}
+                        <img src="{{ item.pokemon.icon_image.url }}" alt="{{ item.pokemon.name }}">
+                    {% endif %}
+                    {{ item.pokemon.name }}
+                </span>
+            {% empty %}
+                <span class="danger-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
 <div class="diagnosis-card muted-diagnosis-card">

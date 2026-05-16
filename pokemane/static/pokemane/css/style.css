@@ -724,3 +724,29 @@ a {
     background: #f9fafb;
     color: #6b7280;
 }
+
+.type-coverage-block {
+    margin-bottom: 14px;
+}
+
+.type-text-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: #eef2ff;
+    color: #3730a3;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.danger-text {
+    color: #b91c1c;
+    font-weight: 700;
+}
+
+.diagnosis-chip-row .type-badge {
+    padding: 7px 10px;
+    font-size: 12px;
+    line-height: 1;
+}
