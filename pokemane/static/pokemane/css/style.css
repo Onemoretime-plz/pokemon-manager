@@ -750,3 +750,19 @@ a {
     font-size: 12px;
     line-height: 1;
 }
+
+.offensive-gap-list {
+    display: grid;
+    gap: 8px;
+}
+
+.offensive-gap-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 14px;
+}

@@ -5,6 +5,7 @@ from pokemane.services.stats import get_effective_pokemon
 from pokemane.services.type_matchups import (
     TYPE_NAMES,
     calculate_defensive_multiplier,
+    get_type_multiplier,
 )
 from pokemane.services.type_styles import get_type_class
 
@@ -464,6 +465,64 @@ def build_defensive_type_coverage(ordered_sets):
     }
 
 
+def build_offensive_type_coverage(ordered_sets):
+    """
+    攻撃技範囲を診断する。
+
+    MVPでは単タイプ18種類のみを対象にする。
+
+    パーティー内に登録されている「攻撃技」のタイプを集め、
+    各防御タイプに対して等倍以上を取れる技タイプがあるか判定する。
+
+    等倍以上を取れる攻撃技タイプが1つもない防御タイプを、
+    攻撃技範囲の穴として表示する。
+    """
+    attack_move_types = set()
+
+    for item in ordered_sets:
+        pokemon_set = item["set"]
+
+        for move in pokemon_set.moves.all():
+            if not move.move_name:
+                continue
+
+            if move.move_category != "attack":
+                continue
+
+            attack_move_types.add(move.move_type)
+
+    uncovered_types = []
+
+    for defense_type in TYPE_NAMES:
+        has_neutral_or_better = False
+
+        for attack_type in attack_move_types:
+            multiplier = get_type_multiplier(
+                attack_type,
+                defense_type,
+                None,
+            )
+
+            if multiplier >= 1:
+                has_neutral_or_better = True
+                break
+
+        if not has_neutral_or_better:
+            uncovered_types.append(
+                {
+                    "name": defense_type,
+                    "type_class": get_type_class(defense_type),
+                }
+            )
+
+    return {
+        "attack_move_types": [
+            build_type_display_item(type_name)
+            for type_name in sorted(attack_move_types)
+        ],
+        "uncovered_types": uncovered_types,
+    }
+
 def diagnose_party_from_ordered_sets(ordered_sets):
     party_summary = build_party_summary(ordered_sets)
     good_matchups = build_good_matchups(ordered_sets)
@@ -474,6 +533,7 @@ def diagnose_party_from_ordered_sets(ordered_sets):
         bad_matchups,
     )
     defensive_type_coverage = build_defensive_type_coverage(ordered_sets)
+    offensive_type_coverage = build_offensive_type_coverage(ordered_sets)
 
     return {
         "party_summary": party_summary,
@@ -482,6 +542,7 @@ def diagnose_party_from_ordered_sets(ordered_sets):
         "bad_matchups": bad_matchups,
         "virtual_target_diagnosis": virtual_target_diagnosis,
         "defensive_type_coverage": defensive_type_coverage,
+        "offensive_type_coverage": offensive_type_coverage,
     }
 
 def diagnose_party(party):

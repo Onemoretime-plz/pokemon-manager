@@ -245,7 +245,34 @@
     </div>
 </div>
 
-<div class="diagnosis-card muted-diagnosis-card">
+<div class="diagnosis-card">
     <h3>7. 攻撃技範囲</h3>
-    <p>次の工程で実装します。</p>
+
+    <div class="type-coverage-block">
+        <h4>登録されている攻撃技タイプ</h4>
+        <div class="diagnosis-chip-row">
+            {% for type_item in diagnosis.offensive_type_coverage.attack_move_types %}
+                <span class="type-badge {{ type_item.type_class }}">{{ type_item.name }}</span>
+            {% empty %}
+                <span class="danger-text">攻撃技が登録されていません。</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="type-coverage-block">
+        <h4>等倍以上の攻撃技がないタイプ</h4>
+
+        {% if diagnosis.offensive_type_coverage.uncovered_types %}
+            <div class="offensive-gap-list">
+                {% for type_item in diagnosis.offensive_type_coverage.uncovered_types %}
+                    <div class="offensive-gap-row">
+                        <span class="type-badge {{ type_item.type_class }}">{{ type_item.name }}</span>
+                        <span>タイプに等倍以上の技がありません。</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="ok-text">単タイプ18種類すべてに等倍以上の攻撃技があります。</p>
+        {% endif %}
+    </div>
 </div>
