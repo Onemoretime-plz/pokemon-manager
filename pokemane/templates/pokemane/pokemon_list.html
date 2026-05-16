@@ -100,6 +100,14 @@
                     {% endif %}
                 </div>
                 <div>
+                    体重：
+                    {% if pokemon.weight_kg %}
+                        {{ pokemon.weight_kg }}kg
+                    {% else %}
+                        <span class="empty-text">未登録</span>
+                    {% endif %}
+                </div>
+                <div>
                     仮想敵：
                     {% if pokemon.is_virtual_target %}
                         <span class="status-badge ok">ON</span>

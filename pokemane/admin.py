@@ -40,6 +40,7 @@ class PokemonAdmin(admin.ModelAdmin):
         "base_sp_attack",
         "base_sp_defense",
         "base_speed",
+        "weight_kg",
         "ability1",
         "ability2",
         "hidden_ability",

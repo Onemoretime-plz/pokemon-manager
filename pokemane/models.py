@@ -75,6 +75,14 @@ class Pokemon(models.Model):
     base_sp_defense = models.PositiveIntegerField("特防種族値")
     base_speed = models.PositiveIntegerField("素早さ種族値")
 
+    weight_kg = models.DecimalField(
+        "体重kg",
+        max_digits=6,
+        decimal_places=1,
+        blank=True,
+        null=True,
+    )
+
     ability1 = models.CharField(
         "特性1",
         max_length=50,
