@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from .models import Party, Pokemon, PokemonSet
 from .services.stats import build_stats_summary, get_effective_pokemon
@@ -237,3 +237,56 @@ def party_list(request):
     }
 
     return render(request, "pokemane/party_list.html", context)
+
+def party_detail(request, party_id):
+    party = get_object_or_404(
+        Party.objects.select_related(
+            "slot1__pokemon",
+            "slot1__selected_mega_evolution",
+            "slot1__selected_mega_evolution__mega_pokemon",
+            "slot2__pokemon",
+            "slot2__selected_mega_evolution",
+            "slot2__selected_mega_evolution__mega_pokemon",
+            "slot3__pokemon",
+            "slot3__selected_mega_evolution",
+            "slot3__selected_mega_evolution__mega_pokemon",
+            "slot4__pokemon",
+            "slot4__selected_mega_evolution",
+            "slot4__selected_mega_evolution__mega_pokemon",
+            "slot5__pokemon",
+            "slot5__selected_mega_evolution",
+            "slot5__selected_mega_evolution__mega_pokemon",
+            "slot6__pokemon",
+            "slot6__selected_mega_evolution",
+            "slot6__selected_mega_evolution__mega_pokemon",
+        ),
+        id=party_id,
+    )
+
+    slot_cards = []
+
+    for index, pokemon_set in enumerate(party.slots(), start=1):
+        if pokemon_set is None:
+            slot_cards.append(
+                {
+                    "slot_number": index,
+                    "is_empty": True,
+                    "card": None,
+                }
+            )
+            continue
+
+        slot_cards.append(
+            {
+                "slot_number": index,
+                "is_empty": False,
+                "card": build_set_card_data(pokemon_set),
+            }
+        )
+
+    context = {
+        "party": party,
+        "slot_cards": slot_cards,
+    }
+
+    return render(request, "pokemane/party_detail.html", context)

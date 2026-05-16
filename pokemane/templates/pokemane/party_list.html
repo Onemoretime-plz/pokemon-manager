@@ -71,7 +71,7 @@
             </div>
 
             <div class="card-actions">
-                <a href="/admin/pokemane/party/{{ party.id }}/change/">編集</a>
+                <a href="{% url 'pokemane:party_detail' party.id %}">編集・診断</a>
                 <a href="/admin/pokemane/party/{{ party.id }}/delete/">削除</a>
             </div>
         </article>

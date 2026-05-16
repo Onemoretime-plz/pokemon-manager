@@ -1,0 +1,131 @@
+{% extends "pokemane/base.html" %}
+
+{% block title %}{{ party.name }} | パーティー診断 | ポケマネ{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>パーティー登録・診断</h1>
+        <p>パーティーの構成と診断結果を確認します。</p>
+    </div>
+
+    <div class="heading-actions">
+        <a class="secondary-button" href="{% url 'pokemane:party_list' %}">一覧へ戻る</a>
+        <a class="primary-button" href="/admin/pokemane/party/{{ party.id }}/change/">管理画面で編集</a>
+    </div>
+</section>
+
+<section class="party-detail-card">
+    <div class="party-detail-header">
+        <div>
+            <div class="detail-label">パーティー名</div>
+            <h2>{{ party.name }}</h2>
+        </div>
+    </div>
+
+    <div class="party-memo-block">
+        <div class="detail-label">備考</div>
+        {% if party.memo %}
+            <p>{{ party.memo }}</p>
+        {% else %}
+            <p class="empty-text">備考なし</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="party-slots-section">
+    <div class="section-title-row">
+        <h2>登録ポケモン</h2>
+        <span class="section-note">型一覧と同じカード形式で表示</span>
+    </div>
+
+    <div class="party-detail-slot-grid">
+        {% for slot in slot_cards %}
+            {% if slot.is_empty %}
+                <article class="party-detail-empty-slot">
+                    <div class="empty-slot-number">Slot {{ slot.slot_number }}</div>
+                    <div class="party-slot-icon placeholder">空</div>
+                    <p>未登録</p>
+                </article>
+            {% else %}
+                {% with card=slot.card %}
+                <article class="set-card party-set-card" data-set-id="{{ card.set.id }}" data-mega-active="{% if card.is_mega_active %}true{% else %}false{% endif %}">
+                    <div class="slot-number-label">Slot {{ slot.slot_number }}</div>
+
+                    <div class="set-card-header">
+                        <div class="pokemon-icon-wrap">
+                            {% if card.pokemon.icon_image %}
+                                <img src="{{ card.pokemon.icon_image.url }}" alt="{{ card.pokemon.name }}" class="pokemon-icon">
+                            {% else %}
+                                <div class="pokemon-icon placeholder">No Image</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="set-title-block">
+                            <div class="pokemon-name-row">
+                                <h2>{{ card.pokemon.name }}</h2>
+                                {% if card.is_mega_active %}
+                                    <span class="mega-badge">メガ</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="set-name">{{ card.set.set_name }}</div>
+
+                            <div class="type-row">
+                                <span class="type-badge {{ card.type1_class }}">{{ card.pokemon.type1 }}</span>
+                                {% if card.pokemon.type2 %}
+                                    <span class="type-badge {{ card.type2_class }}">{{ card.pokemon.type2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="set-info">
+                        <div>特性：{{ card.set.ability_name }}</div>
+                        <div>持ち物：{{ card.set.item_name }}</div>
+                    </div>
+
+                    <div class="stats-row">
+                        <span>{{ card.stats.hp }}</span>
+                        <span>{{ card.stats.attack }}</span>
+                        <span>{{ card.stats.defense }}</span>
+                        <span>{{ card.stats.sp_attack }}</span>
+                        <span>{{ card.stats.sp_defense }}</span>
+                        <span>{{ card.stats.speed }}</span>
+                    </div>
+
+                    <div class="stats-label-row">
+                        <span>HP</span>
+                        <span>攻撃</span>
+                        <span>防御</span>
+                        <span>特攻</span>
+                        <span>特防</span>
+                        <span>素早</span>
+                    </div>
+
+                    <div class="move-grid">
+                        {% for move in card.moves %}
+                            <span class="move-chip {{ move.type_class }}">{{ move.name }}</span>
+                        {% empty %}
+                            <span class="empty-text">技未登録</span>
+                        {% endfor %}
+                    </div>
+                </article>
+                {% endwith %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+<section class="diagnosis-section">
+    <div class="section-title-row">
+        <h2>診断結果</h2>
+        <span class="section-note">次の工程で自動診断を実装</span>
+    </div>
+
+    <div id="diagnosis-result" class="diagnosis-placeholder">
+        <p>診断結果はまだ実装していません。</p>
+        <p>次の工程で、構築の穴・得意/苦手・仮想敵診断・タイプ一貫を表示します。</p>
+    </div>
+</section>
+{% endblock %}
