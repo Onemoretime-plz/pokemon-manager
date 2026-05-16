@@ -1,7 +1,13 @@
+import json
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.template.loader import render_to_string
+from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render
 
 from .models import Party, Pokemon, PokemonSet
-from .services.diagnosis import diagnose_party
+from .services.diagnosis import diagnose_party, diagnose_slots
 from .services.stats import build_stats_summary, get_effective_pokemon
 from .services.type_styles import get_type_class
 
@@ -294,3 +300,47 @@ def party_detail(request, party_id):
     }
 
     return render(request, "pokemane/party_detail.html", context)
+
+@require_POST
+def diagnosis_slots_api(request):
+    """
+    JavaScript fetch用の診断API。
+
+    受け取るJSON例：
+    {
+        "slots": [
+            {"set_id": 1, "mega_active": true},
+            {"set_id": 2, "mega_active": false}
+        ]
+    }
+
+    返却：
+    {
+        "html": "<div>...</div>"
+    }
+    """
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {"error": "Invalid JSON"},
+            status=400,
+        )
+
+    slots = payload.get("slots", [])
+
+    diagnosis = diagnose_slots(slots)
+
+    html = render_to_string(
+        "pokemane/partials/diagnosis_result.html",
+        {
+            "diagnosis": diagnosis,
+        },
+        request=request,
+    )
+
+    return JsonResponse(
+        {
+            "html": html,
+        }
+    )

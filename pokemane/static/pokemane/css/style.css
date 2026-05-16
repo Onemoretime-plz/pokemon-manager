@@ -766,3 +766,22 @@ a {
     border-radius: 12px;
     font-size: 14px;
 }
+
+.diagnosis-title-row {
+    align-items: center;
+}
+
+.small-button {
+    padding: 7px 10px;
+    font-size: 12px;
+}
+
+.diagnosis-error {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    background: #fef2f2;
+    color: #991b1b;
+    font-weight: 700;
+}

@@ -1,4 +1,5 @@
 {% extends "pokemane/base.html" %}
+{% load static %}
 
 {% block title %}{{ party.name }} | パーティー診断 | ポケマネ{% endblock %}
 
@@ -118,13 +119,27 @@
 </section>
 
 <section class="diagnosis-section">
-    <div class="section-title-row">
+    <div class="section-title-row diagnosis-title-row">
         <h2>診断結果</h2>
-        <span class="section-note">次の工程で自動診断を実装</span>
+            <span class="section-note">JavaScript fetchで更新可能</span>
+                <button
+                type="button"
+                id="refresh-diagnosis-button"
+                class="secondary-button small-button">
+                診断を更新
+                </button>
     </div>
 
     <div id="diagnosis-result">
     {% include "pokemane/partials/diagnosis_result.html" %}
 </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.POKEMANE_DIAGNOSIS_API_URL = "{% url 'pokemane:diagnosis_slots_api' %}";
+</script>
+<script src="{% static 'pokemane/js/party_detail.js' %}"></script>
+
 {% endblock %}
