@@ -105,6 +105,42 @@ class Pokemon(models.Model):
     def __str__(self):
         return self.name
 
+class MegaEvolution(models.Model):
+    base_pokemon = models.ForeignKey(
+        Pokemon,
+        verbose_name="メガ進化前ポケモン",
+        on_delete=models.CASCADE,
+        related_name="mega_evolution_options",
+    )
+
+    mega_pokemon = models.ForeignKey(
+        Pokemon,
+        verbose_name="メガ進化後ポケモン",
+        on_delete=models.CASCADE,
+        related_name="mega_form_options",
+    )
+
+    form_name = models.CharField(
+        "フォーム名",
+        max_length=50,
+        blank=True,
+        help_text="例：X、Y、通常など",
+    )
+
+    class Meta:
+        verbose_name = "メガ進化"
+        verbose_name_plural = "メガ進化"
+        unique_together = ("base_pokemon", "mega_pokemon")
+        ordering = ["base_pokemon__name", "mega_pokemon__name"]
+
+    def __str__(self):
+        if self.form_name:
+            return f"{self.base_pokemon.name} → {self.mega_pokemon.name}（{self.form_name}）"
+        return f"{self.base_pokemon.name} → {self.mega_pokemon.name}"
+
+    def clean(self):
+        if self.base_pokemon_id == self.mega_pokemon_id:
+            raise ValidationError("メガ進化前とメガ進化後に同じポケモンは指定できません。")
 
 class PokemonSet(models.Model):
     pokemon = models.ForeignKey(
@@ -123,6 +159,15 @@ class PokemonSet(models.Model):
         "持ち物名",
         max_length=100,
         blank=True,
+    )
+
+    selected_mega_evolution = models.ForeignKey(
+        MegaEvolution,
+        verbose_name="選択メガ進化先",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="pokemon_sets",
     )
 
     nature_up = models.CharField(
@@ -178,8 +223,15 @@ class PokemonSet(models.Model):
         if self.nature_up != "none" and self.nature_up == self.nature_down:
             raise ValidationError("上昇補正と下降補正に同じステータスは指定できません。")
 
-        if self.is_mega_stone and not self.pokemon.mega_evolution_pokemon:
-            raise ValidationError("メガ進化先が登録されていないポケモンにはメガストーンを設定できません。")
+        if self.is_mega_stone:
+            if self.selected_mega_evolution is None:
+                raise ValidationError("メガストーンを設定する場合は、メガ進化先を選択してください。")
+
+            if self.selected_mega_evolution.base_pokemon_id != self.pokemon_id:
+                raise ValidationError("選択されたメガ進化先が、このポケモンに対応していません。")
+
+        if not self.is_mega_stone and self.selected_mega_evolution is not None:
+            raise ValidationError("メガストーンを持たない型には、メガ進化先を設定できません。")
 
     @property
     def item_name(self):

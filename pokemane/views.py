@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from .models import Party, Pokemon, PokemonSet
-from .services.stats import build_stats_summary
+from .services.stats import build_stats_summary, get_effective_pokemon
 from .services.type_styles import get_type_class
 
 
@@ -25,9 +25,7 @@ def build_set_card_data(pokemon_set):
     summary = build_stats_summary(pokemon_set, mega_active=True)
     stats = summary["actual_stats"]
 
-    effective_pokemon = pokemon_set.pokemon
-    if pokemon_set.is_mega_stone and pokemon_set.pokemon.mega_evolution_pokemon:
-        effective_pokemon = pokemon_set.pokemon.mega_evolution_pokemon
+    effective_pokemon = get_effective_pokemon(pokemon_set, mega_active=True)
 
     moves = []
     for move in pokemon_set.moves.all():
@@ -47,7 +45,7 @@ def build_set_card_data(pokemon_set):
         "set": pokemon_set,
         "pokemon": effective_pokemon,
         "original_pokemon": pokemon_set.pokemon,
-        "is_mega_active": pokemon_set.is_mega_stone and pokemon_set.pokemon.mega_evolution_pokemon is not None,
+        "is_mega_active": pokemon_set.is_mega_stone and pokemon_set.selected_mega_evolution is not None,
         "type1_class": get_type_class(effective_pokemon.type1),
         "type2_class": get_type_class(effective_pokemon.type2) if effective_pokemon.type2 else "",
         "stats": stats,
@@ -65,7 +63,11 @@ def set_list(request):
 
     pokemon_sets = (
         PokemonSet.objects
-        .select_related("pokemon", "pokemon__mega_evolution_pokemon")
+        .select_related(
+            "pokemon",
+            "selected_mega_evolution",
+            "selected_mega_evolution__mega_pokemon",
+        )
         .prefetch_related("moves")
     )
 
@@ -186,10 +188,7 @@ def build_party_card_data(party):
             slots.append(None)
             continue
 
-        effective_pokemon = pokemon_set.pokemon
-
-        if pokemon_set.is_mega_stone and pokemon_set.pokemon.mega_evolution_pokemon:
-            effective_pokemon = pokemon_set.pokemon.mega_evolution_pokemon
+        effective_pokemon = get_effective_pokemon(pokemon_set, mega_active=True)
 
         slots.append(
             {

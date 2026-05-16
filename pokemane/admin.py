@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import (
     Matchup,
+    MegaEvolution,
     Party,
     Pokemon,
     PokemonSet,
@@ -51,6 +52,19 @@ class PokemonAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     ordering = ("name",)
 
+@admin.register(MegaEvolution)
+class MegaEvolutionAdmin(admin.ModelAdmin):
+    list_display = (
+        "base_pokemon",
+        "mega_pokemon",
+        "form_name",
+    )
+    search_fields = (
+        "base_pokemon__name",
+        "mega_pokemon__name",
+        "form_name",
+    )
+    list_filter = ("form_name",)
 
 @admin.register(PokemonSet)
 class PokemonSetAdmin(admin.ModelAdmin):
@@ -59,6 +73,8 @@ class PokemonSetAdmin(admin.ModelAdmin):
         "set_name",
         "ability_name",
         "item_name",
+        "is_mega_stone",
+        "selected_mega_evolution",
         "nature_up",
         "nature_down",
         "updated_at",

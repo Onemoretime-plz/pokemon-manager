@@ -8,23 +8,20 @@ def get_effective_pokemon(pokemon_set, mega_active=True):
     """
     型に対して、実際に計算に使うPokemonを返す。
 
-    - メガストーン持ち
-    - mega_active=True
-    - メガ進化先が登録済み
+    通常型：
+    - pokemon_set.pokemon を返す。
 
-    の場合は、メガ進化後Pokemonを返す。
-    それ以外は通常のpokemonを返す。
+    メガストーン型かつ mega_active=True：
+    - selected_mega_evolution.mega_pokemon を返す。
     """
-    pokemon = pokemon_set.pokemon
-
     if (
         mega_active
         and pokemon_set.is_mega_stone
-        and pokemon.mega_evolution_pokemon is not None
+        and pokemon_set.selected_mega_evolution is not None
     ):
-        return pokemon.mega_evolution_pokemon
+        return pokemon_set.selected_mega_evolution.mega_pokemon
 
-    return pokemon
+    return pokemon_set.pokemon
 
 
 def get_nature_modifier(stat_name, pokemon_set):
