@@ -335,3 +335,114 @@ a {
     background: #e5e7eb;
     color: #555;
 }
+
+.party-card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.party-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.party-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.party-card-header h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.party-card-header p {
+    margin: 6px 0 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.party-slot-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+}
+
+.party-slot {
+    min-height: 136px;
+    padding: 10px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    text-align: center;
+}
+
+.party-slot-icon-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.party-slot-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.party-slot-icon.placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 8px;
+    background: #eef0f3;
+    border-radius: 12px;
+    color: #777;
+    font-size: 12px;
+}
+
+.party-slot-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+}
+
+.party-slot-set-name {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #666;
+}
+
+.empty-slot {
+    opacity: 0.7;
+}
+
+.mini-mega-badge {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 2px 5px;
+    border-radius: 999px;
+    background: #7c3aed;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .party-slot-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .party-slot-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

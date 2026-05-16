@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Pokemon, PokemonSet
+from .models import Party, Pokemon, PokemonSet
 from .services.stats import build_stats_summary
 from .services.type_styles import get_type_class
 
@@ -177,3 +177,64 @@ def pokemon_list(request):
     }
 
     return render(request, "pokemane/pokemon_list.html", context)
+
+def build_party_card_data(party):
+    slots = []
+
+    for pokemon_set in party.slots():
+        if pokemon_set is None:
+            slots.append(None)
+            continue
+
+        effective_pokemon = pokemon_set.pokemon
+
+        if pokemon_set.is_mega_stone and pokemon_set.pokemon.mega_evolution_pokemon:
+            effective_pokemon = pokemon_set.pokemon.mega_evolution_pokemon
+
+        slots.append(
+            {
+                "set": pokemon_set,
+                "pokemon": effective_pokemon,
+                "is_mega": pokemon_set.is_mega_stone,
+            }
+        )
+
+    return {
+        "party": party,
+        "slots": slots,
+    }
+
+
+def party_list(request):
+    query = request.GET.get("q", "").strip()
+
+    parties = (
+        Party.objects
+        .select_related(
+            "slot1__pokemon",
+            "slot1__pokemon__mega_evolution_pokemon",
+            "slot2__pokemon",
+            "slot2__pokemon__mega_evolution_pokemon",
+            "slot3__pokemon",
+            "slot3__pokemon__mega_evolution_pokemon",
+            "slot4__pokemon",
+            "slot4__pokemon__mega_evolution_pokemon",
+            "slot5__pokemon",
+            "slot5__pokemon__mega_evolution_pokemon",
+            "slot6__pokemon",
+            "slot6__pokemon__mega_evolution_pokemon",
+        )
+        .order_by("-updated_at")
+    )
+
+    if query:
+        parties = parties.filter(name__icontains=query)
+
+    cards = [build_party_card_data(party) for party in parties]
+
+    context = {
+        "cards": cards,
+        "query": query,
+    }
+
+    return render(request, "pokemane/party_list.html", context)
