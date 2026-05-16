@@ -274,3 +274,64 @@ a {
 .type-steel { background-color: #60a1b8; }
 .type-fairy { background-color: #ef70ef; }
 .type-unknown { background-color: #777; }
+
+.pokemon-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 18px;
+}
+
+.pokemon-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.pokemon-card-header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.pokemon-title-block h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.base-stats-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    text-align: center;
+    padding: 10px 0 4px;
+    border-top: 1px solid #edf0f3;
+    font-weight: 700;
+}
+
+.pokemon-meta {
+    display: grid;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #444;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-badge.ok {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.muted {
+    background: #e5e7eb;
+    color: #555;
+}
