@@ -49,7 +49,12 @@
                 </div>
 
                 <div class="pokemon-title-block">
-                    <h2>{{ pokemon.name }}</h2>
+                    <h2>
+                        {% if pokemon.national_dex_no %}
+                            <span class="dex-no">No.{{ pokemon.national_dex_no }}</span>
+                        {% endif %}
+                        {{ pokemon.name }}
+                    </h2>
 
                     <div class="type-row">
                         <span class="type-badge {{ card.type1_class }}">{{ pokemon.type1 }}</span>
@@ -79,6 +84,21 @@
             </div>
 
             <div class="pokemon-meta">
+                                <div>
+                    特性：
+                    {% if pokemon.ability1 %}
+                        <span class="ability-chip">{{ pokemon.ability1 }}</span>
+                    {% endif %}
+                    {% if pokemon.ability2 %}
+                        <span class="ability-chip">{{ pokemon.ability2 }}</span>
+                    {% endif %}
+                    {% if pokemon.hidden_ability %}
+                        <span class="ability-chip hidden-ability">{{ pokemon.hidden_ability }}</span>
+                    {% endif %}
+                    {% if not pokemon.ability1 and not pokemon.ability2 and not pokemon.hidden_ability %}
+                        <span class="empty-text">未登録</span>
+                    {% endif %}
+                </div>
                 <div>
                     仮想敵：
                     {% if pokemon.is_virtual_target %}

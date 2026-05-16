@@ -120,6 +120,7 @@ def set_list(request):
     return render(request, "pokemane/set_list.html", context)
 
 POKEMON_SORT_LABELS = {
+    "dex_no": "図鑑No順",
     "name": "名前順",
     "hp_desc": "HP降順",
     "hp_asc": "HP昇順",
@@ -146,7 +147,7 @@ def build_pokemon_card_data(pokemon):
 
 def pokemon_list(request):
     query = request.GET.get("q", "").strip()
-    sort = request.GET.get("sort", "name")
+    sort = request.GET.get("sort", "dex_no")
 
     pokemons = Pokemon.objects.select_related(
         "mega_evolution_pokemon",
@@ -157,6 +158,7 @@ def pokemon_list(request):
         pokemons = pokemons.filter(name__icontains=query)
 
     sort_map = {
+        "dex_no": "national_dex_no",
         "name": "name",
         "hp_desc": "-base_hp",
         "hp_asc": "base_hp",
@@ -171,8 +173,7 @@ def pokemon_list(request):
         "speed_desc": "-base_speed",
         "speed_asc": "base_speed",
     }
-
-    order_by = sort_map.get(sort, "name")
+    order_by = sort_map.get(sort, "national_dex_no")
     pokemons = pokemons.order_by(order_by, "name")
 
     cards = [build_pokemon_card_data(pokemon) for pokemon in pokemons]
@@ -181,7 +182,7 @@ def pokemon_list(request):
         "cards": cards,
         "query": query,
         "sort": sort,
-        "sort_label": POKEMON_SORT_LABELS.get(sort, "名前順"),
+        "sort_label": POKEMON_SORT_LABELS.get(sort, "図鑑No順"),
         "sort_labels": POKEMON_SORT_LABELS,
     }
 

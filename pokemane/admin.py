@@ -30,6 +30,7 @@ class WeakMatchupInline(admin.TabularInline):
 @admin.register(Pokemon)
 class PokemonAdmin(admin.ModelAdmin):
     list_display = (
+        "national_dex_no",
         "name",
         "type1",
         "type2",
@@ -39,9 +40,11 @@ class PokemonAdmin(admin.ModelAdmin):
         "base_sp_attack",
         "base_sp_defense",
         "base_speed",
+        "ability1",
+        "ability2",
+        "hidden_ability",
         "is_virtual_target",
         "can_mega_evolve",
-        "mega_evolution_pokemon",
     )
     list_filter = (
         "type1",
@@ -49,8 +52,16 @@ class PokemonAdmin(admin.ModelAdmin):
         "is_virtual_target",
         "can_mega_evolve",
     )
-    search_fields = ("name",)
-    ordering = ("name",)
+    search_fields = (
+        "name",
+        "ability1",
+        "ability2",
+        "hidden_ability",
+    )
+    ordering = (
+        "national_dex_no",
+        "name",
+    )
 
 @admin.register(MegaEvolution)
 class MegaEvolutionAdmin(admin.ModelAdmin):

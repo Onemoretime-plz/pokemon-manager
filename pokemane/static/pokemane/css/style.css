@@ -785,3 +785,27 @@ a {
     color: #991b1b;
     font-weight: 700;
 }
+
+.dex-no {
+    display: inline-block;
+    margin-right: 6px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ability-chip {
+    display: inline-block;
+    margin: 2px 4px 2px 0;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #3730a3;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.hidden-ability {
+    background: #fef3c7;
+    color: #92400e;
+}

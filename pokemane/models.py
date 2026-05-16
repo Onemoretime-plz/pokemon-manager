@@ -52,6 +52,13 @@ MATCHUP_METHOD_CHOICES = [
 class Pokemon(models.Model):
     name = models.CharField("ポケモン名", max_length=50, unique=True)
 
+    national_dex_no = models.PositiveIntegerField(
+        "全国図鑑No",
+        blank=True,
+        null=True,
+        db_index=True,
+    )
+
     type1 = models.CharField("タイプ1", max_length=20, choices=TYPE_CHOICES)
     type2 = models.CharField(
         "タイプ2",
@@ -67,6 +74,22 @@ class Pokemon(models.Model):
     base_sp_attack = models.PositiveIntegerField("特攻種族値")
     base_sp_defense = models.PositiveIntegerField("特防種族値")
     base_speed = models.PositiveIntegerField("素早さ種族値")
+
+    ability1 = models.CharField(
+        "特性1",
+        max_length=50,
+        blank=True,
+    )
+    ability2 = models.CharField(
+        "特性2",
+        max_length=50,
+        blank=True,
+    )
+    hidden_ability = models.CharField(
+        "夢特性",
+        max_length=50,
+        blank=True,
+    )
 
     icon_image = models.ImageField(
         "アイコン画像",
@@ -100,7 +123,22 @@ class Pokemon(models.Model):
     class Meta:
         verbose_name = "ポケモン"
         verbose_name_plural = "ポケモン"
-        ordering = ["name"]
+        ordering = ["national_dex_no", "name"]
+
+    def ability_options(self):
+        """
+        このポケモンが持ちうる特性名をリストで返す。
+        空欄は除外する。
+        """
+        return [
+            ability
+            for ability in [
+                self.ability1,
+                self.ability2,
+                self.hidden_ability,
+            ]
+            if ability
+        ]
 
     def __str__(self):
         return self.name
