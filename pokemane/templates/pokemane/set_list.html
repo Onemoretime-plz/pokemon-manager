@@ -1,0 +1,114 @@
+{% extends "pokemane/base.html" %}
+
+{% block title %}型一覧 | ポケマネ{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>型一覧</h1>
+        <p>登録済みの型を確認します。</p>
+    </div>
+    <a class="primary-button" href="/admin/pokemane/pokemonset/add/">＋ 型登録</a>
+</section>
+
+<form method="get" class="toolbar">
+    <input
+        type="text"
+        name="q"
+        value="{{ query }}"
+        placeholder="検索：ポケモン名・型名・特性・持ち物"
+        class="search-input"
+    >
+
+    <select name="sort" class="sort-select">
+        {% for value, label in sort_labels.items %}
+            <option value="{{ value }}" {% if sort == value %}selected{% endif %}>
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="secondary-button">表示</button>
+</form>
+
+<div class="current-sort">
+    現在の並べ替え：<strong>{{ sort_label }}</strong>
+</div>
+
+<section class="set-card-grid">
+    {% for card in cards %}
+        <article class="set-card">
+            <div class="set-card-header">
+                <div class="pokemon-icon-wrap">
+                    {% if card.pokemon.icon_image %}
+                        <img src="{{ card.pokemon.icon_image.url }}" alt="{{ card.pokemon.name }}" class="pokemon-icon">
+                    {% else %}
+                        <div class="pokemon-icon placeholder">No Image</div>
+                    {% endif %}
+                </div>
+
+                <div class="set-title-block">
+                    <div class="pokemon-name-row">
+                        <h2>{{ card.pokemon.name }}</h2>
+                        {% if card.is_mega_active %}
+                            <span class="mega-badge">メガ</span>
+                        {% endif %}
+                    </div>
+                    <div class="set-name">{{ card.set.set_name }}</div>
+
+                    <div class="type-row">
+                        <span class="type-badge {{ card.type1_class }}">{{ card.pokemon.type1 }}</span>
+                        {% if card.pokemon.type2 %}
+                            <span class="type-badge {{ card.type2_class }}">{{ card.pokemon.type2 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="set-info">
+                <div>特性：{{ card.set.ability_name }}</div>
+                <div>持ち物：{{ card.set.item_name }}</div>
+            </div>
+
+            <div class="stats-row">
+                <span>{{ card.stats.hp }}</span>
+                <span>{{ card.stats.attack }}</span>
+                <span>{{ card.stats.defense }}</span>
+                <span>{{ card.stats.sp_attack }}</span>
+                <span>{{ card.stats.sp_defense }}</span>
+                <span>{{ card.stats.speed }}</span>
+            </div>
+
+            <div class="stats-label-row">
+                <span>HP</span>
+                <span>攻撃</span>
+                <span>防御</span>
+                <span>特攻</span>
+                <span>特防</span>
+                <span>素早</span>
+            </div>
+
+            <div class="bulk-row">
+                <span>物理耐久：{{ card.physical_bulk }}</span>
+                <span>特殊耐久：{{ card.special_bulk }}</span>
+                <span>総合：{{ card.overall_bulk }}</span>
+            </div>
+
+            <div class="move-grid">
+                {% for move in card.moves %}
+                    <span class="move-chip {{ move.type_class }}">{{ move.name }}</span>
+                {% empty %}
+                    <span class="empty-text">技未登録</span>
+                {% endfor %}
+            </div>
+
+            <div class="card-actions">
+                <a href="/admin/pokemane/pokemonset/{{ card.set.id }}/change/">編集</a>
+                <a href="/admin/pokemane/pokemonset/{{ card.set.id }}/delete/">削除</a>
+            </div>
+        </article>
+    {% empty %}
+        <p>登録済みの型がありません。</p>
+    {% endfor %}
+</section>
+{% endblock %}
