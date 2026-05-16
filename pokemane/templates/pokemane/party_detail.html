@@ -123,9 +123,8 @@
         <span class="section-note">次の工程で自動診断を実装</span>
     </div>
 
-    <div id="diagnosis-result" class="diagnosis-placeholder">
-        <p>診断結果はまだ実装していません。</p>
-        <p>次の工程で、構築の穴・得意/苦手・仮想敵診断・タイプ一貫を表示します。</p>
-    </div>
+    <div id="diagnosis-result">
+    {% include "pokemane/partials/diagnosis_result.html" %}
+</div>
 </section>
 {% endblock %}

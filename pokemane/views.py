@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 
 from .models import Party, Pokemon, PokemonSet
+from .services.diagnosis import diagnose_party
 from .services.stats import build_stats_summary, get_effective_pokemon
 from .services.type_styles import get_type_class
 
@@ -284,9 +285,12 @@ def party_detail(request, party_id):
             }
         )
 
+    diagnosis = diagnose_party(party)
+
     context = {
         "party": party,
         "slot_cards": slot_cards,
+        "diagnosis": diagnosis,
     }
 
     return render(request, "pokemane/party_detail.html", context)

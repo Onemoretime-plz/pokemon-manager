@@ -1,0 +1,185 @@
+<div class="diagnosis-card">
+    <h3>1. パーティー概要</h3>
+
+    <div class="diagnosis-icon-row">
+        {% for member in diagnosis.party_summary %}
+            <div class="diagnosis-member">
+                {% if member.pokemon.icon_image %}
+                    <img src="{{ member.pokemon.icon_image.url }}" alt="{{ member.pokemon.name }}" class="diagnosis-icon">
+                {% else %}
+                    <div class="diagnosis-icon placeholder">No Image</div>
+                {% endif %}
+
+                <div class="diagnosis-member-name">
+                    {{ member.pokemon.name }}
+                    {% if member.mega_active %}
+                        <span class="mini-mega-badge">メガ</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="empty-text">登録済みポケモンがありません。</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="diagnosis-card">
+    <h3>2. 構築の穴</h3>
+
+    {% for hole in diagnosis.coverage_holes %}
+        <div class="diagnosis-target-block danger-block">
+            <div class="diagnosis-target-title">
+                {% if hole.target.icon_image %}
+                    <img src="{{ hole.target.icon_image.url }}" alt="{{ hole.target.name }}" class="mini-pokemon-icon">
+                {% endif %}
+                <strong>{{ hole.target.name }}</strong>
+            </div>
+
+            <div class="diagnosis-sub-line">
+                苦手登録：
+                {% for weak_set in hole.weak_sets %}
+                    <span class="small-set-chip">
+                        {% if weak_set.pokemon.icon_image %}
+                            <img src="{{ weak_set.pokemon.icon_image.url }}" alt="{{ weak_set.pokemon.name }}">
+                        {% endif %}
+                        {{ weak_set.pokemon.name }}
+                    </span>
+                {% endfor %}
+            </div>
+
+            <div class="diagnosis-sub-line">役割対象：なし</div>
+        </div>
+    {% empty %}
+        <p class="ok-text">構築の穴はありません。</p>
+    {% endfor %}
+</div>
+
+<div class="diagnosis-card">
+    <h3>3. 比較的得意なポケモン</h3>
+
+    {% for group in diagnosis.good_matchups %}
+        <div class="matchup-method-block">
+            <h4>■ {{ group.label }}</h4>
+
+            <div class="diagnosis-chip-row">
+                {% for target in group.targets %}
+                    <span class="target-chip">
+                        {% if target.icon_image %}
+                            <img src="{{ target.icon_image.url }}" alt="{{ target.name }}">
+                        {% endif %}
+                        {{ target.name }}
+                    </span>
+                {% empty %}
+                    <span class="empty-text">なし</span>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="diagnosis-card">
+    <h3>4. 比較的苦手なポケモン</h3>
+
+    {% for bad in diagnosis.bad_matchups %}
+        <div class="bad-matchup-row">
+            <div class="bad-target-name">
+                {% if bad.target.icon_image %}
+                    <img src="{{ bad.target.icon_image.url }}" alt="{{ bad.target.name }}" class="mini-pokemon-icon">
+                {% endif %}
+                <strong>{{ bad.target.name }}</strong>
+                <span class="count-badge">{{ bad.count }}</span>
+            </div>
+
+            <div class="weak-set-icons">
+                {% for weak_set in bad.weak_sets %}
+                    <span class="small-set-chip">
+                        {% if weak_set.pokemon.icon_image %}
+                            <img src="{{ weak_set.pokemon.icon_image.url }}" alt="{{ weak_set.pokemon.name }}">
+                        {% endif %}
+                        {{ weak_set.pokemon.name }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+    {% empty %}
+        <p class="empty-text">苦手対象は登録されていません。</p>
+    {% endfor %}
+</div>
+
+<div class="diagnosis-card">
+    <h3>5. 仮想敵診断</h3>
+
+    <div class="virtual-target-section">
+        <h4>対応あり</h4>
+        <div class="diagnosis-chip-row">
+            {% for target in diagnosis.virtual_target_diagnosis.covered %}
+                <span class="target-chip">
+                    {% if target.icon_image %}
+                        <img src="{{ target.icon_image.url }}" alt="{{ target.name }}">
+                    {% endif %}
+                    {{ target.name }}
+                </span>
+            {% empty %}
+                <span class="empty-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="virtual-target-section">
+        <h4>苦手登録あり</h4>
+        <div class="diagnosis-chip-row">
+            {% for target in diagnosis.virtual_target_diagnosis.weak %}
+                <span class="target-chip warning-chip">
+                    {% if target.icon_image %}
+                        <img src="{{ target.icon_image.url }}" alt="{{ target.name }}">
+                    {% endif %}
+                    {{ target.name }}
+                </span>
+            {% empty %}
+                <span class="empty-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="virtual-target-section">
+        <h4>未登録</h4>
+        <div class="diagnosis-chip-row">
+            {% for target in diagnosis.virtual_target_diagnosis.unregistered %}
+                <span class="target-chip muted-chip">
+                    {% if target.icon_image %}
+                        <img src="{{ target.icon_image.url }}" alt="{{ target.name }}">
+                    {% endif %}
+                    {{ target.name }}
+                </span>
+            {% empty %}
+                <span class="empty-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="virtual-target-section">
+        <h4>穴</h4>
+        <div class="diagnosis-chip-row">
+            {% for target in diagnosis.virtual_target_diagnosis.holes %}
+                <span class="target-chip danger-chip">
+                    {% if target.icon_image %}
+                        <img src="{{ target.icon_image.url }}" alt="{{ target.name }}">
+                    {% endif %}
+                    {{ target.name }}
+                </span>
+            {% empty %}
+                <span class="ok-text">なし</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="diagnosis-card muted-diagnosis-card">
+    <h3>6. 防御側タイプ一貫</h3>
+    <p>次の工程で実装します。</p>
+</div>
+
+<div class="diagnosis-card muted-diagnosis-card">
+    <h3>7. 攻撃技範囲</h3>
+    <p>次の工程で実装します。</p>
+</div>

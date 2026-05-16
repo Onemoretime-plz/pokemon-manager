@@ -557,3 +557,170 @@ a {
 .diagnosis-placeholder p {
     margin: 0 0 8px;
 }
+
+
+.diagnosis-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.diagnosis-card h3 {
+    margin: 0 0 14px;
+    font-size: 18px;
+}
+
+.diagnosis-card h4 {
+    margin: 12px 0 8px;
+    font-size: 14px;
+}
+
+.diagnosis-icon-row,
+.diagnosis-chip-row,
+.weak-set-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.diagnosis-member {
+    width: 96px;
+    text-align: center;
+}
+
+.diagnosis-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.diagnosis-icon.placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto;
+    background: #eef0f3;
+    border-radius: 12px;
+    color: #777;
+    font-size: 10px;
+}
+
+.diagnosis-member-name {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.diagnosis-target-block {
+    padding: 12px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+}
+
+.danger-block {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+.diagnosis-target-title,
+.bad-target-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mini-pokemon-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.diagnosis-sub-line {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #444;
+}
+
+.small-set-chip,
+.target-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.small-set-chip {
+    padding: 4px 8px;
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.small-set-chip img,
+.target-chip img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.target-chip {
+    padding: 6px 10px;
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+.warning-chip {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.danger-chip {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.muted-chip {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.bad-matchup-row {
+    display: grid;
+    gap: 8px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf0f3;
+}
+
+.bad-matchup-row:last-child {
+    border-bottom: none;
+}
+
+.count-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.ok-text {
+    color: #15803d;
+    font-weight: 700;
+}
+
+.empty-text {
+    color: #777;
+}
+
+.muted-diagnosis-card {
+    background: #f9fafb;
+    color: #6b7280;
+}
