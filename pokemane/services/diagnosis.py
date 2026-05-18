@@ -471,11 +471,9 @@ def build_offensive_type_coverage(ordered_sets):
 
     MVPでは単タイプ18種類のみを対象にする。
 
-    パーティー内に登録されている「攻撃技」のタイプを集め、
-    各防御タイプに対して等倍以上を取れる技タイプがあるか判定する。
-
-    等倍以上を取れる攻撃技タイプが1つもない防御タイプを、
-    攻撃技範囲の穴として表示する。
+    判定項目：
+    - 等倍以上の攻撃技がないタイプ
+    - 抜群以上の攻撃技がないタイプ
     """
     attack_move_types = set()
 
@@ -491,10 +489,12 @@ def build_offensive_type_coverage(ordered_sets):
 
             attack_move_types.add(move.move_type)
 
-    uncovered_types = []
+    neutral_uncovered_types = []
+    super_effective_uncovered_types = []
 
     for defense_type in TYPE_NAMES:
         has_neutral_or_better = False
+        has_super_effective = False
 
         for attack_type in attack_move_types:
             multiplier = get_type_multiplier(
@@ -505,10 +505,20 @@ def build_offensive_type_coverage(ordered_sets):
 
             if multiplier >= 1:
                 has_neutral_or_better = True
-                break
+
+            if multiplier >= 2:
+                has_super_effective = True
 
         if not has_neutral_or_better:
-            uncovered_types.append(
+            neutral_uncovered_types.append(
+                {
+                    "name": defense_type,
+                    "type_class": get_type_class(defense_type),
+                }
+            )
+
+        if not has_super_effective:
+            super_effective_uncovered_types.append(
                 {
                     "name": defense_type,
                     "type_class": get_type_class(defense_type),
@@ -520,7 +530,8 @@ def build_offensive_type_coverage(ordered_sets):
             build_type_display_item(type_name)
             for type_name in sorted(attack_move_types)
         ],
-        "uncovered_types": uncovered_types,
+        "neutral_uncovered_types": neutral_uncovered_types,
+        "super_effective_uncovered_types": super_effective_uncovered_types,
     }
 
 def diagnose_party_from_ordered_sets(ordered_sets):

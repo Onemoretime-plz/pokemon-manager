@@ -262,9 +262,9 @@
     <div class="type-coverage-block">
         <h4>等倍以上の攻撃技がないタイプ</h4>
 
-        {% if diagnosis.offensive_type_coverage.uncovered_types %}
+        {% if diagnosis.offensive_type_coverage.neutral_uncovered_types %}
             <div class="offensive-gap-list">
-                {% for type_item in diagnosis.offensive_type_coverage.uncovered_types %}
+                {% for type_item in diagnosis.offensive_type_coverage.neutral_uncovered_types %}
                     <div class="offensive-gap-row">
                         <span class="type-badge {{ type_item.type_class }}">{{ type_item.name }}</span>
                         <span>タイプに等倍以上の技がありません。</span>
@@ -273,6 +273,23 @@
             </div>
         {% else %}
             <p class="ok-text">単タイプ18種類すべてに等倍以上の攻撃技があります。</p>
+        {% endif %}
+    </div>
+
+    <div class="type-coverage-block">
+        <h4>抜群以上の攻撃技がないタイプ</h4>
+
+        {% if diagnosis.offensive_type_coverage.super_effective_uncovered_types %}
+            <div class="offensive-gap-list">
+                {% for type_item in diagnosis.offensive_type_coverage.super_effective_uncovered_types %}
+                    <div class="offensive-gap-row">
+                        <span class="type-badge {{ type_item.type_class }}">{{ type_item.name }}</span>
+                        <span>タイプに抜群以上の技がありません。</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="ok-text">単タイプ18種類すべてに抜群以上の攻撃技があります。</p>
         {% endif %}
     </div>
 </div>
