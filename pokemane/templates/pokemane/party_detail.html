@@ -50,7 +50,11 @@
                 </article>
             {% else %}
                 {% with card=slot.card %}
-                <article class="set-card party-set-card" data-set-id="{{ card.set.id }}" data-mega-active="{% if card.is_mega_active %}true{% else %}false{% endif %}">
+                <article
+                class="set-card party-set-card"
+                data-set-id="{{ card.set.id }}"
+                data-slot-number="{{ slot.slot_number }}"
+                data-mega-active="{% if card.is_mega_active %}true{% else %}false{% endif %}">
                     <div class="slot-number-label">Slot {{ slot.slot_number }}</div>
 
                     <div class="set-card-header">
@@ -111,6 +115,14 @@
                             <span class="empty-text">技未登録</span>
                         {% endfor %}
                     </div>
+                    <div class="slot-actions">
+                        <button
+                            type="button"
+                            class="danger-button clear-slot-button"
+                            data-slot-number="{{ slot.slot_number }}"
+                        >このスロットを削除
+                        </button>
+                    </div>
                 </article>
                 {% endwith %}
             {% endif %}
@@ -139,7 +151,7 @@
 {% block scripts %}
 <script>
     window.POKEMANE_DIAGNOSIS_API_URL = "{% url 'pokemane:diagnosis_slots_api' %}";
+    window.POKEMANE_CLEAR_SLOT_API_URL = "{% url 'pokemane:clear_party_slot_api' party.id %}";
 </script>
 <script src="{% static 'pokemane/js/party_detail.js' %}"></script>
-
 {% endblock %}

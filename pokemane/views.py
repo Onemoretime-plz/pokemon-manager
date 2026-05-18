@@ -345,3 +345,43 @@ def diagnosis_slots_api(request):
             "html": html,
         }
     )
+
+
+@require_POST
+def clear_party_slot_api(request, party_id):
+    """
+    パーティースロットを空にするAPI。
+
+    受け取るJSON例：
+    {
+        "slot_number": 1
+    }
+    """
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {"error": "Invalid JSON"},
+            status=400,
+        )
+
+    slot_number = payload.get("slot_number")
+
+    if slot_number not in [1, 2, 3, 4, 5, 6]:
+        return JsonResponse(
+            {"error": "Invalid slot_number"},
+            status=400,
+        )
+
+    party = get_object_or_404(Party, id=party_id)
+
+    slot_field = f"slot{slot_number}"
+    setattr(party, slot_field, None)
+    party.save(update_fields=[slot_field, "updated_at"])
+
+    return JsonResponse(
+        {
+            "success": True,
+            "slot_number": slot_number,
+        }
+    )

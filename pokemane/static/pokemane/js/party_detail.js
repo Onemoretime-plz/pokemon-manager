@@ -66,7 +66,6 @@ async function refreshDiagnosis() {
         }
 
         const data = await response.json();
-
         diagnosisArea.innerHTML = data.html;
     } catch (error) {
         console.error(error);
@@ -78,10 +77,65 @@ async function refreshDiagnosis() {
     }
 }
 
+async function clearPartySlot(slotNumber) {
+    const apiUrl = window.POKEMANE_CLEAR_SLOT_API_URL;
+
+    if (!apiUrl) {
+        console.error("スロット削除APIのURLが設定されていません。");
+        return;
+    }
+
+    const confirmed = window.confirm(`Slot ${slotNumber} を削除しますか？`);
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({
+                slot_number: Number(slotNumber),
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`スロット削除APIエラー: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error("スロット削除に失敗しました。");
+        }
+
+        window.location.reload();
+    } catch (error) {
+        console.error(error);
+        alert("スロット削除に失敗しました。");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("party_detail.js loaded");
+
     const refreshButton = document.getElementById("refresh-diagnosis-button");
 
     if (refreshButton) {
         refreshButton.addEventListener("click", refreshDiagnosis);
     }
+
+    const clearSlotButtons = document.querySelectorAll(".clear-slot-button");
+
+    console.log("clearSlotButtons:", clearSlotButtons.length);
+
+    clearSlotButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            clearPartySlot(button.dataset.slotNumber);
+        });
+    });
 });

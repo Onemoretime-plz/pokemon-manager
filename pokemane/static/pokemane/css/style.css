@@ -809,3 +809,24 @@ a {
     background: #fef3c7;
     color: #92400e;
 }
+
+.slot-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.danger-button {
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 8px 10px;
+    background: #fef2f2;
+    color: #991b1b;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.danger-button:hover {
+    background: #fee2e2;
+}
