@@ -71,8 +71,15 @@
                         <div class="set-title-block">
                             <div class="pokemon-name-row">
                                 <h2>{{ card.pokemon.name }}</h2>
-                                {% if card.is_mega_active %}
-                                    <span class="mega-badge">メガ</span>
+                                {% if card.set.is_mega_stone %}
+                                    <button
+                                        type="button"
+                                        class="mega-toggle-button is-active"
+                                        data-slot-number="{{ slot.slot_number }}"
+                                        data-mega-active="true"
+                                    >
+                                        メガON
+                                    </button>
                                 {% endif %}
                             </div>
 

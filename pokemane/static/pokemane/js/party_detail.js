@@ -1,3 +1,5 @@
+console.log("party_detail.js file loaded");
+
 function getCookie(name) {
     const cookies = document.cookie ? document.cookie.split(";") : [];
 
@@ -120,62 +122,6 @@ async function clearPartySlot(slotNumber) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const refreshButton = document.getElementById("refresh-diagnosis-button");
-
-    if (refreshButton) {
-        refreshButton.addEventListener("click", refreshDiagnosis);
-    }
-
-    const clearSlotButtons = document.querySelectorAll(".clear-slot-button");
-
-    clearSlotButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            clearPartySlot(button.dataset.slotNumber);
-        });
-    });
-
-    const emptySlots = document.querySelectorAll(".selectable-empty-slot");
-
-    emptySlots.forEach((slot) => {
-        slot.addEventListener("click", () => {
-            openSetSelectModal(slot.dataset.slotNumber);
-        });
-    });
-
-    const closeModalButton = document.getElementById("close-set-modal-button");
-
-    if (closeModalButton) {
-        closeModalButton.addEventListener("click", closeSetSelectModal);
-    }
-
-    const modal = document.getElementById("set-select-modal");
-
-    if (modal) {
-        modal.addEventListener("click", (event) => {
-            if (event.target === modal) {
-                closeSetSelectModal();
-            }
-        });
-    }
-
-    const setOptions = document.querySelectorAll(".modal-set-option");
-
-    setOptions.forEach((option) => {
-        option.addEventListener("click", () => {
-            setPartySlot(option.dataset.setId);
-        });
-    });
-
-    const setSearchInput = document.getElementById("set-search-input");
-
-    if (setSearchInput) {
-        setSearchInput.addEventListener("input", () => {
-            filterSetOptions(setSearchInput.value);
-        });
-    }
-});
-
 let selectedSlotNumber = null;
 
 function openSetSelectModal(slotNumber) {
@@ -185,6 +131,7 @@ function openSetSelectModal(slotNumber) {
     const label = document.getElementById("modal-slot-label");
 
     if (!modal) {
+        console.error("型選択モーダルが見つかりません。");
         return;
     }
 
@@ -254,7 +201,7 @@ function filterSetOptions(keyword) {
     const options = document.querySelectorAll(".modal-set-option");
 
     options.forEach((option) => {
-        const searchText = option.dataset.searchText.toLowerCase();
+        const searchText = (option.dataset.searchText || "").toLowerCase();
 
         if (!normalizedKeyword || searchText.includes(normalizedKeyword)) {
             option.classList.remove("hidden");
@@ -263,3 +210,103 @@ function filterSetOptions(keyword) {
         }
     });
 }
+
+function toggleMegaState(button) {
+    const slotNumber = button.dataset.slotNumber;
+    const card = document.querySelector(
+        `.party-set-card[data-slot-number="${slotNumber}"]`
+    );
+
+    if (!card) {
+        console.error(`Slot ${slotNumber} のカードが見つかりません。`);
+        return;
+    }
+
+    const currentMegaActive = card.dataset.megaActive === "true";
+    const nextMegaActive = !currentMegaActive;
+
+    card.dataset.megaActive = nextMegaActive ? "true" : "false";
+    button.dataset.megaActive = nextMegaActive ? "true" : "false";
+
+    if (nextMegaActive) {
+        button.textContent = "メガON";
+        button.classList.add("is-active");
+    } else {
+        button.textContent = "メガOFF";
+        button.classList.remove("is-active");
+    }
+
+    refreshDiagnosis();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOMContentLoaded fired");
+
+    const refreshButton = document.getElementById("refresh-diagnosis-button");
+
+    if (refreshButton) {
+        refreshButton.addEventListener("click", refreshDiagnosis);
+    }
+
+    const clearSlotButtons = document.querySelectorAll(".clear-slot-button");
+    console.log("clearSlotButtons:", clearSlotButtons.length);
+
+    clearSlotButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            clearPartySlot(button.dataset.slotNumber);
+        });
+    });
+
+    const emptySlots = document.querySelectorAll(".selectable-empty-slot");
+    console.log("emptySlots:", emptySlots.length);
+
+    emptySlots.forEach((slot) => {
+        slot.addEventListener("click", () => {
+            console.log("empty slot clicked:", slot.dataset.slotNumber);
+            openSetSelectModal(slot.dataset.slotNumber);
+        });
+    });
+
+    const megaToggleButtons = document.querySelectorAll(".mega-toggle-button");
+    console.log("megaToggleButtons:", megaToggleButtons.length);
+
+    megaToggleButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            console.log("mega toggle clicked:", button.dataset.slotNumber);
+            toggleMegaState(button);
+        });
+    });
+
+    const closeModalButton = document.getElementById("close-set-modal-button");
+
+    if (closeModalButton) {
+        closeModalButton.addEventListener("click", closeSetSelectModal);
+    }
+
+    const modal = document.getElementById("set-select-modal");
+
+    if (modal) {
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                closeSetSelectModal();
+            }
+        });
+    }
+
+    const setOptions = document.querySelectorAll(".modal-set-option");
+    console.log("setOptions:", setOptions.length);
+
+    setOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+            setPartySlot(option.dataset.setId);
+        });
+    });
+
+    const setSearchInput = document.getElementById("set-search-input");
+
+    if (setSearchInput) {
+        setSearchInput.addEventListener("input", () => {
+            filterSetOptions(setSearchInput.value);
+        });
+    }
+});

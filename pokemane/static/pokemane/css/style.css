@@ -972,3 +972,24 @@ a {
     color: #475569;
     white-space: nowrap;
 }
+
+.mega-toggle-button {
+    border: 1px solid #c4b5fd;
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: #f5f3ff;
+    color: #6d28d9;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mega-toggle-button.is-active {
+    background: #7c3aed;
+    color: #ffffff;
+    border-color: #7c3aed;
+}
+
+.mega-toggle-button:hover {
+    filter: brightness(0.97);
+}
