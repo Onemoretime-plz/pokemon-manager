@@ -121,8 +121,6 @@ async function clearPartySlot(slotNumber) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("party_detail.js loaded");
-
     const refreshButton = document.getElementById("refresh-diagnosis-button");
 
     if (refreshButton) {
@@ -131,11 +129,137 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const clearSlotButtons = document.querySelectorAll(".clear-slot-button");
 
-    console.log("clearSlotButtons:", clearSlotButtons.length);
-
     clearSlotButtons.forEach((button) => {
         button.addEventListener("click", () => {
             clearPartySlot(button.dataset.slotNumber);
         });
     });
+
+    const emptySlots = document.querySelectorAll(".selectable-empty-slot");
+
+    emptySlots.forEach((slot) => {
+        slot.addEventListener("click", () => {
+            openSetSelectModal(slot.dataset.slotNumber);
+        });
+    });
+
+    const closeModalButton = document.getElementById("close-set-modal-button");
+
+    if (closeModalButton) {
+        closeModalButton.addEventListener("click", closeSetSelectModal);
+    }
+
+    const modal = document.getElementById("set-select-modal");
+
+    if (modal) {
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                closeSetSelectModal();
+            }
+        });
+    }
+
+    const setOptions = document.querySelectorAll(".modal-set-option");
+
+    setOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+            setPartySlot(option.dataset.setId);
+        });
+    });
+
+    const setSearchInput = document.getElementById("set-search-input");
+
+    if (setSearchInput) {
+        setSearchInput.addEventListener("input", () => {
+            filterSetOptions(setSearchInput.value);
+        });
+    }
 });
+
+let selectedSlotNumber = null;
+
+function openSetSelectModal(slotNumber) {
+    selectedSlotNumber = Number(slotNumber);
+
+    const modal = document.getElementById("set-select-modal");
+    const label = document.getElementById("modal-slot-label");
+
+    if (!modal) {
+        return;
+    }
+
+    if (label) {
+        label.textContent = `Slot ${selectedSlotNumber} に追加`;
+    }
+
+    modal.classList.remove("hidden");
+}
+
+function closeSetSelectModal() {
+    const modal = document.getElementById("set-select-modal");
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.add("hidden");
+    selectedSlotNumber = null;
+}
+
+async function setPartySlot(setId) {
+    const apiUrl = window.POKEMANE_SET_SLOT_API_URL;
+
+    if (!apiUrl) {
+        console.error("スロット登録APIのURLが設定されていません。");
+        return;
+    }
+
+    if (!selectedSlotNumber) {
+        alert("追加先スロットが選択されていません。");
+        return;
+    }
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({
+                slot_number: selectedSlotNumber,
+                set_id: Number(setId),
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`スロット登録APIエラー: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error("スロット登録に失敗しました。");
+        }
+
+        window.location.reload();
+    } catch (error) {
+        console.error(error);
+        alert("スロット登録に失敗しました。");
+    }
+}
+
+function filterSetOptions(keyword) {
+    const normalizedKeyword = keyword.trim().toLowerCase();
+    const options = document.querySelectorAll(".modal-set-option");
+
+    options.forEach((option) => {
+        const searchText = option.dataset.searchText.toLowerCase();
+
+        if (!normalizedKeyword || searchText.includes(normalizedKeyword)) {
+            option.classList.remove("hidden");
+        } else {
+            option.classList.add("hidden");
+        }
+    });
+}

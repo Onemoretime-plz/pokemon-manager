@@ -43,10 +43,12 @@
     <div class="party-detail-slot-grid">
         {% for slot in slot_cards %}
             {% if slot.is_empty %}
-                <article class="party-detail-empty-slot">
+                <article class="party-detail-empty-slot selectable-empty-slot"
+                data-slot-number="{{ slot.slot_number }}">
                     <div class="empty-slot-number">Slot {{ slot.slot_number }}</div>
                     <div class="party-slot-icon placeholder">空</div>
                     <p>未登録</p>
+                    <p class="empty-slot-help">クリックして型を追加</p>
                 </article>
             {% else %}
                 {% with card=slot.card %}
@@ -146,12 +148,62 @@
     {% include "pokemane/partials/diagnosis_result.html" %}
 </div>
 </section>
+
+<div id="set-select-modal" class="modal-backdrop hidden">
+    <div class="modal-panel">
+        <div class="modal-header">
+            <div>
+                <h2>型を選択</h2>
+                <p id="modal-slot-label">Slot</p>
+            </div>
+            <button type="button" id="close-set-modal-button" class="secondary-button small-button">
+                閉じる
+            </button>
+        </div>
+
+        <input
+            type="text"
+            id="set-search-input"
+            class="search-input modal-search-input"
+            placeholder="検索：ポケモン名・型名・特性・持ち物"
+        >
+
+        <div class="modal-set-list">
+            {% for pokemon_set in available_sets %}
+                <button
+                    type="button"
+                    class="modal-set-option"
+                    data-set-id="{{ pokemon_set.id }}"
+                    data-search-text="{{ pokemon_set.pokemon.name }} {{ pokemon_set.set_name }} {{ pokemon_set.ability_name }} {{ pokemon_set.item_name }}"
+                >
+                    <span class="modal-set-main">
+                        {% if pokemon_set.pokemon.icon_image %}
+                            <img src="{{ pokemon_set.pokemon.icon_image.url }}" alt="{{ pokemon_set.pokemon.name }}">
+                        {% else %}
+                            <span class="modal-set-no-image">No Image</span>
+                        {% endif %}
+                        <span>
+                            <strong>{{ pokemon_set.pokemon.name }}</strong>
+                            <span>{{ pokemon_set.set_name }}</span>
+                        </span>
+                    </span>
+                    <span class="modal-set-sub">
+                        {{ pokemon_set.ability_name }} / {{ pokemon_set.item_name }}
+                    </span>
+                </button>
+            {% empty %}
+                <p class="empty-text">登録済みの型がありません。</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
     window.POKEMANE_DIAGNOSIS_API_URL = "{% url 'pokemane:diagnosis_slots_api' %}";
     window.POKEMANE_CLEAR_SLOT_API_URL = "{% url 'pokemane:clear_party_slot_api' party.id %}";
+    window.POKEMANE_SET_SLOT_API_URL = "{% url 'pokemane:set_party_slot_api' party.id %}";
 </script>
-<script src="{% static 'pokemane/js/party_detail.js' %}"></script>
+<script src="{% static 'pokemane/js/party_detail.js' %}?v=3"></script>
 {% endblock %}

@@ -294,10 +294,21 @@ def party_detail(request, party_id):
 
     diagnosis = diagnose_party(party)
 
+    available_sets = (
+        PokemonSet.objects
+        .select_related(
+            "pokemon",
+            "selected_mega_evolution",
+            "selected_mega_evolution__mega_pokemon",
+        )
+        .order_by("pokemon__national_dex_no", "pokemon__name", "set_name")
+    )
+
     context = {
         "party": party,
         "slot_cards": slot_cards,
         "diagnosis": diagnosis,
+        "available_sets": available_sets,
     }
 
     return render(request, "pokemane/party_detail.html", context)
@@ -383,5 +394,54 @@ def clear_party_slot_api(request, party_id):
         {
             "success": True,
             "slot_number": slot_number,
+        }
+    )
+
+@require_POST
+def set_party_slot_api(request, party_id):
+    """
+    パーティースロットに型を登録するAPI。
+
+    受け取るJSON例：
+    {
+        "slot_number": 1,
+        "set_id": 5
+    }
+    """
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {"error": "Invalid JSON"},
+            status=400,
+        )
+
+    slot_number = payload.get("slot_number")
+    set_id = payload.get("set_id")
+
+    if slot_number not in [1, 2, 3, 4, 5, 6]:
+        return JsonResponse(
+            {"error": "Invalid slot_number"},
+            status=400,
+        )
+
+    if not set_id:
+        return JsonResponse(
+            {"error": "set_id is required"},
+            status=400,
+        )
+
+    party = get_object_or_404(Party, id=party_id)
+    pokemon_set = get_object_or_404(PokemonSet, id=set_id)
+
+    slot_field = f"slot{slot_number}"
+    setattr(party, slot_field, pokemon_set)
+    party.save(update_fields=[slot_field, "updated_at"])
+
+    return JsonResponse(
+        {
+            "success": True,
+            "slot_number": slot_number,
+            "set_id": pokemon_set.id,
         }
     )

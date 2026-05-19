@@ -15,4 +15,9 @@ urlpatterns = [
         views.clear_party_slot_api,
         name="clear_party_slot_api",
     ),
+    path(
+        "api/parties/<int:party_id>/set-slot/",
+        views.set_party_slot_api,
+        name="set_party_slot_api",
+    ),
 ]
