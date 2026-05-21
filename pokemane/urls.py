@@ -27,4 +27,9 @@ urlpatterns = [
     path("pokemon/new/", views.pokemon_form, name="pokemon_create"),
     path("pokemon/<int:pokemon_id>/edit/", views.pokemon_form, name="pokemon_edit"),
     path("pokemon/<int:pokemon_id>/delete/", views.pokemon_delete, name="pokemon_delete"),
+    path(
+    "api/parties/<int:party_id>/move-slot/",
+    views.move_party_slot_api,
+    name="move_party_slot_api",
+    ),
 ]

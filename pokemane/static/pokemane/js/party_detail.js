@@ -121,6 +121,45 @@ async function clearPartySlot(slotNumber) {
     }
 }
 
+async function movePartySlot(slotNumber, direction) {
+    const apiUrl = window.POKEMANE_MOVE_SLOT_API_URL;
+
+    if (!apiUrl) {
+        console.error("スロット移動APIのURLが設定されていません。");
+        return;
+    }
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({
+                slot_number: Number(slotNumber),
+                direction: direction,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`スロット移動APIエラー: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error("スロット移動に失敗しました。");
+        }
+
+        window.location.reload();
+    } catch (error) {
+        console.error(error);
+        alert("スロット移動に失敗しました。");
+    }
+}
+
+
 let selectedSlotNumber = null;
 
 function openSetSelectModal(slotNumber) {
@@ -374,6 +413,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (refreshButton) {
         refreshButton.addEventListener("click", refreshDiagnosis);
     }
+
+    const moveSlotButtons = document.querySelectorAll(".move-slot-button");
+
+    moveSlotButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            movePartySlot(button.dataset.slotNumber, button.dataset.direction);
+        });
+    });
+
 
     const clearSlotButtons = document.querySelectorAll(".clear-slot-button");
 

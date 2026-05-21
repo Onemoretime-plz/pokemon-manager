@@ -925,3 +925,73 @@ def pokemon_delete(request, pokemon_id):
     pokemon.delete()
 
     return redirect("pokemane:pokemon_list")
+
+@require_POST
+def move_party_slot_api(request, party_id):
+    """
+    パーティースロットを前後に移動するAPI。
+
+    受け取るJSON例：
+    {
+        "slot_number": 3,
+        "direction": "left"
+    }
+
+    direction:
+    - left: 1つ前のスロットと交換
+    - right: 1つ後ろのスロットと交換
+    """
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {"error": "Invalid JSON"},
+            status=400,
+        )
+
+    slot_number = payload.get("slot_number")
+    direction = payload.get("direction")
+
+    if slot_number not in [1, 2, 3, 4, 5, 6]:
+        return JsonResponse(
+            {"error": "Invalid slot_number"},
+            status=400,
+        )
+
+    if direction not in ["left", "right"]:
+        return JsonResponse(
+            {"error": "Invalid direction"},
+            status=400,
+        )
+
+    if direction == "left":
+        target_slot_number = slot_number - 1
+    else:
+        target_slot_number = slot_number + 1
+
+    if target_slot_number < 1 or target_slot_number > 6:
+        return JsonResponse(
+            {"error": "Cannot move outside party slots"},
+            status=400,
+        )
+
+    party = get_object_or_404(Party, id=party_id)
+
+    current_field = f"slot{slot_number}"
+    target_field = f"slot{target_slot_number}"
+
+    current_value = getattr(party, current_field)
+    target_value = getattr(party, target_field)
+
+    setattr(party, current_field, target_value)
+    setattr(party, target_field, current_value)
+
+    party.save(update_fields=[current_field, target_field, "updated_at"])
+
+    return JsonResponse(
+        {
+            "success": True,
+            "slot_number": slot_number,
+            "target_slot_number": target_slot_number,
+        }
+    )

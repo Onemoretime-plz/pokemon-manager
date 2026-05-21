@@ -67,12 +67,14 @@
     <div class="party-detail-slot-grid">
         {% for slot in slot_cards %}
             {% if slot.is_empty %}
-                <article class="party-detail-empty-slot selectable-empty-slot"
-                data-slot-number="{{ slot.slot_number }}">
+                <article
+                    class="party-detail-empty-slot selectable-empty-slot"
+                    data-slot-number="{{ slot.slot_number }}"
+                >
                     <div class="empty-slot-number">Slot {{ slot.slot_number }}</div>
                     <div class="party-slot-icon placeholder">空</div>
-                    <p>未登録</p>
-                    <p class="empty-slot-help">クリックして型を追加</p>
+                    <p>この位置は空きです</p>
+                    <p class="empty-slot-help">クリックしてこの位置に型を追加</p>
                 </article>
             {% else %}
                 {% with card=slot.card %}
@@ -178,12 +180,35 @@
                             <span class="empty-text">技未登録</span>
                         {% endfor %}
                     </div>
-                    <div class="slot-actions">
+                    <div class="slot-actions slot-actions-with-move">
+                        <div class="slot-move-actions">
+                            <button
+                                type="button"
+                                class="secondary-button small-button move-slot-button"
+                                data-slot-number="{{ slot.slot_number }}"
+                                data-direction="left"
+                                {% if slot.slot_number == 1 %}disabled{% endif %}
+                            >
+                                ← 前へ
+                            </button>
+
+                            <button
+                                type="button"
+                                class="secondary-button small-button move-slot-button"
+                                data-slot-number="{{ slot.slot_number }}"
+                                data-direction="right"
+                                {% if slot.slot_number == 6 %}disabled{% endif %}
+                            >
+                                後ろへ →
+                            </button>
+                        </div>
+
                         <button
                             type="button"
                             class="danger-button clear-slot-button"
                             data-slot-number="{{ slot.slot_number }}"
-                        >このスロットを削除
+                        >
+                            このスロットを削除
                         </button>
                     </div>
                 </article>
@@ -265,6 +290,7 @@
     window.POKEMANE_DIAGNOSIS_API_URL = "{% url 'pokemane:diagnosis_slots_api' %}";
     window.POKEMANE_CLEAR_SLOT_API_URL = "{% url 'pokemane:clear_party_slot_api' party.id %}";
     window.POKEMANE_SET_SLOT_API_URL = "{% url 'pokemane:set_party_slot_api' party.id %}";
+    window.POKEMANE_MOVE_SLOT_API_URL = "{% url 'pokemane:move_party_slot_api' party.id %}";
 </script>
-<script src="{% static 'pokemane/js/party_detail.js' %}?v=9"></script>
+<script src="{% static 'pokemane/js/party_detail.js' %}?v=10"></script>
 {% endblock %}
