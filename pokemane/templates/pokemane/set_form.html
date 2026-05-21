@@ -202,6 +202,98 @@
         </div>
     </section>
 
+    <section class="form-section matchup-section">
+    <h2>役割対象</h2>
+    <p class="form-help">この型が対応できる相手ポケモンを登録します。</p>
+
+    <div class="matchup-form-grid">
+        {% for row in matchup_rows %}
+            <div class="matchup-form-row">
+                <div class="matchup-number">役割{{ row.number }}</div>
+
+                <div class="form-field">
+                    <label>対象ポケモン</label>
+                    <select name="matchup_target_{{ row.number }}">
+                        <option value="">未選択</option>
+                        {% for pokemon in pokemons %}
+                            <option
+                                value="{{ pokemon.id }}"
+                                {% if row.target_pokemon_id == pokemon.id %}selected{% endif %}
+                            >
+                                {% if pokemon.national_dex_no %}No.{{ pokemon.national_dex_no }} {% endif %}
+                                {{ pokemon.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label>遂行方法</label>
+                    <select name="matchup_method_{{ row.number }}">
+                        {% for value, label in matchup_method_choices %}
+                            <option
+                                value="{{ value }}"
+                                {% if row.method == value %}selected{% endif %}
+                            >
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label>メモ</label>
+                    <input
+                        type="text"
+                        name="matchup_memo_{{ row.number }}"
+                        value="{{ row.memo }}"
+                        placeholder="例：後投げ安定、型次第など"
+                    >
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </section>
+
+    <section class="form-section weak-matchup-section">
+    <h2>苦手対象</h2>
+    <p class="form-help">この型が比較的苦手とする相手ポケモンを登録します。</p>
+
+    <div class="matchup-form-grid">
+        {% for row in weak_matchup_rows %}
+            <div class="weak-matchup-form-row">
+                <div class="matchup-number">苦手{{ row.number }}</div>
+
+                <div class="form-field">
+                    <label>対象ポケモン</label>
+                    <select name="weak_target_{{ row.number }}">
+                        <option value="">未選択</option>
+                        {% for pokemon in pokemons %}
+                            <option
+                                value="{{ pokemon.id }}"
+                                {% if row.target_pokemon_id == pokemon.id %}selected{% endif %}
+                            >
+                                {% if pokemon.national_dex_no %}No.{{ pokemon.national_dex_no }} {% endif %}
+                                {{ pokemon.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label>メモ</label>
+                    <input
+                        type="text"
+                        name="weak_memo_{{ row.number }}"
+                        value="{{ row.memo }}"
+                        placeholder="例：受け崩し困難、上から縛られるなど"
+                    >
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </section>
+
     <section class="form-section">
         <h2>メモ</h2>
 
