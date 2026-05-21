@@ -206,7 +206,7 @@
     <h2>役割対象</h2>
     <p class="form-help">この型が対応できる相手ポケモンを登録します。</p>
 
-    <div class="matchup-form-grid">
+    <div class="matchup-form-grid" id="matchup-form-grid">
         {% for row in matchup_rows %}
             <div class="matchup-form-row">
                 <div class="matchup-number">役割{{ row.number }}</div>
@@ -270,13 +270,85 @@
             </div>
         {% endfor %}
     </div>
+    <input
+        type="hidden"
+        name="matchup_count"
+        id="matchup-count"
+        value="{{ matchup_rows|length }}"
+    >
+
+    <button
+        type="button"
+        class="secondary-button add-row-button"
+        id="add-matchup-row-button"
+    >
+        ＋ 役割対象を追加
+    </button>
     </section>
+
+
+<template id="matchup-row-template">
+    <div class="matchup-form-row">
+        <div class="matchup-number">役割__number__</div>
+
+        <div class="form-field">
+            <label>対象ポケモン</label>
+
+            <div class="pokemon-select-with-icon">
+                <select
+                    name="matchup_target___number__"
+                    class="pokemon-icon-select"
+                    data-icon-target="matchup-icon-__number__"
+                >
+                    <option value="">未選択</option>
+                    {% for pokemon in pokemons %}
+                        <option value="{{ pokemon.id }}">
+                            {% if pokemon.national_dex_no %}No.{{ pokemon.national_dex_no }} {% endif %}
+                            {{ pokemon.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <div class="selected-pokemon-icon-box">
+                    <img
+                        id="matchup-icon-__number__"
+                        class="selected-pokemon-icon hidden"
+                        src=""
+                        alt=""
+                    >
+                    <span class="selected-pokemon-icon-placeholder hidden">No Image</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-field">
+            <label>遂行方法</label>
+            <select name="matchup_method___number__">
+                {% for value, label in matchup_method_choices %}
+                    <option value="{{ value }}">
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label>メモ</label>
+            <input
+                type="text"
+                name="matchup_memo___number__"
+                placeholder="例：後投げ安定、型次第など"
+            >
+        </div>
+    </div>
+</template>
+
 
 <section class="form-section weak-matchup-section">
     <h2>苦手対象</h2>
     <p class="form-help">この型が比較的苦手とする相手ポケモンを登録します。</p>
 
-    <div class="matchup-form-grid">
+    <div class="matchup-form-grid" id="weak-matchup-form-grid">
         {% for row in weak_matchup_rows %}
             <div class="weak-matchup-form-row">
                 <div class="matchup-number">苦手{{ row.number }}</div>
@@ -326,7 +398,70 @@
             </div>
         {% endfor %}
     </div>
+
+  <input
+      type="hidden"
+      name="weak_matchup_count"
+      id="weak-matchup-count"
+      value="{{ weak_matchup_rows|length }}"
+  >
+
+  <button
+      type="button"
+      class="secondary-button add-row-button"
+      id="add-weak-matchup-row-button"
+  >
+      ＋ 苦手対象を追加
+  </button>
+
 </section>
+
+
+<template id="weak-matchup-row-template">
+    <div class="weak-matchup-form-row">
+        <div class="matchup-number">苦手__number__</div>
+
+        <div class="form-field">
+            <label>対象ポケモン</label>
+
+            <div class="pokemon-select-with-icon">
+                <select
+                    name="weak_target___number__"
+                    class="pokemon-icon-select"
+                    data-icon-target="weak-icon-__number__"
+                >
+                    <option value="">未選択</option>
+                    {% for pokemon in pokemons %}
+                        <option value="{{ pokemon.id }}">
+                            {% if pokemon.national_dex_no %}No.{{ pokemon.national_dex_no }} {% endif %}
+                            {{ pokemon.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <div class="selected-pokemon-icon-box">
+                    <img
+                        id="weak-icon-__number__"
+                        class="selected-pokemon-icon hidden"
+                        src=""
+                        alt=""
+                    >
+                    <span class="selected-pokemon-icon-placeholder hidden">No Image</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-field">
+            <label>メモ</label>
+            <input
+                type="text"
+                name="weak_memo___number__"
+                placeholder="例：受け崩し困難、上から縛られるなど"
+            >
+        </div>
+    </div>
+</template>
+
 
     <section class="form-section">
         <h2>メモ</h2>
@@ -352,5 +487,5 @@
     window.POKEMANE_POKEMON_MEGAS = {{ pokemon_mega_map_json|safe }};
     window.POKEMANE_POKEMON_ICONS = {{ pokemon_icon_map_json|safe }};
 </script>
-<script src="{% static 'pokemane/js/set_form.js' %}?v=3"></script>
+<script src="{% static 'pokemane/js/set_form.js' %}?v=5"></script>
 {% endblock %}

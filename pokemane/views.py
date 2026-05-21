@@ -658,8 +658,24 @@ def set_form(request, set_id=None):
                 # 役割対象を再作成する。
         pokemon_set.matchups.all().delete()
 
-        for number in range(1, 6):
+        matchup_count = int(request.POST.get("matchup_count") or 0)
+
+        for number in range(1, matchup_count + 1):
             target_pokemon_id = request.POST.get(f"matchup_target_{number}", "")
+            method = request.POST.get(f"matchup_method_{number}", "face_to_face")
+            memo = request.POST.get(f"matchup_memo_{number}", "").strip()
+
+            if not target_pokemon_id:
+                continue
+
+            target_pokemon = get_object_or_404(Pokemon, id=target_pokemon_id)
+
+            Matchup.objects.create(
+                pokemon_set=pokemon_set,
+                target_pokemon=target_pokemon,
+                method=method,
+                memo=memo,
+            )
             method = request.POST.get(f"matchup_method_{number}", "face_to_face")
             memo = request.POST.get(f"matchup_memo_{number}", "").strip()
 
@@ -678,8 +694,22 @@ def set_form(request, set_id=None):
         # 苦手対象を再作成する。
         pokemon_set.weak_matchups.all().delete()
 
-        for number in range(1, 6):
+        weak_matchup_count = int(request.POST.get("weak_matchup_count") or 0)
+
+        for number in range(1, weak_matchup_count + 1):
             target_pokemon_id = request.POST.get(f"weak_target_{number}", "")
+            memo = request.POST.get(f"weak_memo_{number}", "").strip()
+
+            if not target_pokemon_id:
+                continue
+
+            target_pokemon = get_object_or_404(Pokemon, id=target_pokemon_id)
+
+            WeakMatchup.objects.create(
+                pokemon_set=pokemon_set,
+                target_pokemon=target_pokemon,
+                memo=memo,
+            )
             memo = request.POST.get(f"weak_memo_{number}", "").strip()
 
             if not target_pokemon_id:
@@ -745,7 +775,7 @@ def set_form(request, set_id=None):
 
     return render(request, "pokemane/set_form.html", context)
 
-def build_matchup_form_rows(pokemon_set=None, max_rows=5):
+def build_matchup_form_rows(pokemon_set=None):
     existing_matchups = []
 
     if pokemon_set:
@@ -755,22 +785,30 @@ def build_matchup_form_rows(pokemon_set=None, max_rows=5):
 
     rows = []
 
-    for index in range(max_rows):
-        matchup = existing_matchups[index] if index < len(existing_matchups) else None
-
+    for index, matchup in enumerate(existing_matchups, start=1):
         rows.append(
             {
-                "number": index + 1,
-                "target_pokemon_id": matchup.target_pokemon_id if matchup else "",
-                "method": matchup.method if matchup else "face_to_face",
-                "memo": matchup.memo if matchup else "",
+                "number": index,
+                "target_pokemon_id": matchup.target_pokemon_id,
+                "method": matchup.method,
+                "memo": matchup.memo,
+            }
+        )
+
+    if not rows:
+        rows.append(
+            {
+                "number": 1,
+                "target_pokemon_id": "",
+                "method": "face_to_face",
+                "memo": "",
             }
         )
 
     return rows
 
 
-def build_weak_matchup_form_rows(pokemon_set=None, max_rows=5):
+def build_weak_matchup_form_rows(pokemon_set=None):
     existing_weak_matchups = []
 
     if pokemon_set:
@@ -780,18 +818,21 @@ def build_weak_matchup_form_rows(pokemon_set=None, max_rows=5):
 
     rows = []
 
-    for index in range(max_rows):
-        weak_matchup = (
-            existing_weak_matchups[index]
-            if index < len(existing_weak_matchups)
-            else None
-        )
-
+    for index, weak_matchup in enumerate(existing_weak_matchups, start=1):
         rows.append(
             {
-                "number": index + 1,
-                "target_pokemon_id": weak_matchup.target_pokemon_id if weak_matchup else "",
-                "memo": weak_matchup.memo if weak_matchup else "",
+                "number": index,
+                "target_pokemon_id": weak_matchup.target_pokemon_id,
+                "memo": weak_matchup.memo,
+            }
+        )
+
+    if not rows:
+        rows.append(
+            {
+                "number": 1,
+                "target_pokemon_id": "",
+                "memo": "",
             }
         )
 

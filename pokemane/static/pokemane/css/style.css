@@ -1659,3 +1659,8 @@ a {
         grid-template-columns: 1fr 52px;
     }
 }
+
+.add-row-button {
+    width: fit-content;
+    margin-top: 12px;
+}

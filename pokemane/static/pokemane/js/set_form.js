@@ -205,23 +205,57 @@ function updatePokemonIconPreview(selectElement) {
     }
 }
 
+function attachPokemonIconPreview(selectElement) {
+    updatePokemonIconPreview(selectElement);
+
+    selectElement.addEventListener("change", () => {
+        updatePokemonIconPreview(selectElement);
+    });
+}
+
 function initializePokemonIconPreviews() {
     const selects = document.querySelectorAll(".pokemon-icon-select");
 
     selects.forEach((selectElement) => {
-        updatePokemonIconPreview(selectElement);
-
-        selectElement.addEventListener("change", () => {
-            updatePokemonIconPreview(selectElement);
-        });
+        attachPokemonIconPreview(selectElement);
     });
 }
+
+function addDynamicRow(templateId, gridId, countInputId) {
+    const template = document.getElementById(templateId);
+    const grid = document.getElementById(gridId);
+    const countInput = document.getElementById(countInputId);
+
+    if (!template || !grid || !countInput) {
+        return;
+    }
+
+    const nextNumber = Number(countInput.value || 0) + 1;
+    countInput.value = String(nextNumber);
+
+    const html = template.innerHTML.replaceAll("__number__", String(nextNumber));
+
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = html.trim();
+
+    const newRow = wrapper.firstElementChild;
+    grid.appendChild(newRow);
+
+    const select = newRow.querySelector(".pokemon-icon-select");
+
+    if (select) {
+        attachPokemonIconPreview(select);
+    }
+}
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
     const pokemonSelect = document.getElementById("pokemon-select");
     const megaCheckbox = document.getElementById("mega-stone-checkbox");
     const megaSelect = document.getElementById("mega-evolution-select");
+    const addMatchupButton = document.getElementById("add-matchup-row-button");
+    const addWeakMatchupButton = document.getElementById("add-weak-matchup-row-button");
 
     updateAbilityOptions();
     updateMegaOptions();
@@ -238,6 +272,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             updateMegaOptions();
+        });
+    }
+
+    if (addMatchupButton) {
+        addMatchupButton.addEventListener("click", () => {
+            addDynamicRow(
+                "matchup-row-template",
+                "matchup-form-grid",
+                "matchup-count"
+            );
+        });
+    }
+
+    if (addWeakMatchupButton) {
+        addWeakMatchupButton.addEventListener("click", () => {
+            addDynamicRow(
+                "weak-matchup-row-template",
+                "weak-matchup-form-grid",
+                "weak-matchup-count"
+            );
         });
     }
 });
