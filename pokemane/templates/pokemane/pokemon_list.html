@@ -8,7 +8,10 @@
         <h1>実装ポケモン一覧</h1>
         <p>登録済みポケモンの基本情報を確認します。</p>
     </div>
-    <a class="primary-button" href="/admin/pokemane/pokemon/add/">＋ ポケモン登録</a>
+
+    <a class="primary-button" href="{% url 'pokemane:pokemon_create' %}">
+        ＋ ポケモン登録
+    </a>
 </section>
 
 <form method="get" class="toolbar">
@@ -131,8 +134,13 @@
             </div>
 
             <div class="card-actions">
-                <a href="/admin/pokemane/pokemon/{{ pokemon.id }}/change/">編集</a>
-                <a href="/admin/pokemane/pokemon/{{ pokemon.id }}/delete/">削除</a>
+                <a class="secondary-button small-button" href="{% url 'pokemane:pokemon_edit' pokemon.id %}">
+                    編集
+                </a>
+
+                <a class="danger-button small-delete-button" href="/admin/pokemane/pokemon/{{ pokemon.id }}/delete/">
+                    削除
+                </a>
             </div>
         </article>
         {% endwith %}

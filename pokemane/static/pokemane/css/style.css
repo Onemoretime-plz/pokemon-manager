@@ -1775,3 +1775,29 @@ a {
         width: 100%;
     }
 }
+
+.pokemon-form-main-section {
+    border-top: 4px solid #0ea5e9;
+}
+
+.ability-form-section {
+    border-top: 4px solid #a855f7;
+}
+
+.pokemon-form-main-section h2::before {
+    background: #0ea5e9;
+}
+
+.ability-form-section h2::before {
+    background: #a855f7;
+}
+
+.three-columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+    .three-columns {
+        grid-template-columns: 1fr;
+    }
+}

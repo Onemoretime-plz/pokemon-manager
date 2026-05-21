@@ -1,0 +1,204 @@
+{% extends "pokemane/base.html" %}
+
+{% block title %}{{ page_title }} | ポケマネ{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>{{ page_title }}</h1>
+        <p>ポケモンの基本情報・種族値・特性・アイコンを登録します。</p>
+    </div>
+
+    <a class="secondary-button" href="{% url 'pokemane:pokemon_list' %}">
+        一覧へ戻る
+    </a>
+</section>
+
+<form method="post" enctype="multipart/form-data" class="set-form-card set-form-layout">
+    {% csrf_token %}
+
+    <section class="form-section pokemon-form-main-section">
+        <h2>基本情報</h2>
+
+        <div class="form-grid two-columns">
+            <div class="form-field">
+                <label>全国図鑑No</label>
+                <input
+                    type="number"
+                    name="national_dex_no"
+                    min="1"
+                    value="{% if pokemon and pokemon.national_dex_no %}{{ pokemon.national_dex_no }}{% endif %}"
+                    placeholder="例：445"
+                >
+            </div>
+
+            <div class="form-field">
+                <label>ポケモン名</label>
+                <input
+                    type="text"
+                    name="name"
+                    value="{% if pokemon %}{{ pokemon.name }}{% endif %}"
+                    required
+                    placeholder="例：ガブリアス"
+                >
+            </div>
+
+            <div class="form-field">
+                <label>タイプ1</label>
+                <select name="type1" required>
+                    <option value="">選択してください</option>
+                    {% for type_name in type_choices %}
+                        <option
+                            value="{{ type_name }}"
+                            {% if pokemon and pokemon.type1 == type_name %}selected{% endif %}
+                        >
+                            {{ type_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>タイプ2</label>
+                <select name="type2">
+                    <option value="">なし</option>
+                    {% for type_name in type_choices %}
+                        <option
+                            value="{{ type_name }}"
+                            {% if pokemon and pokemon.type2 == type_name %}selected{% endif %}
+                        >
+                            {{ type_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>体重kg</label>
+                <input
+                    type="number"
+                    step="0.1"
+                    name="weight_kg"
+                    value="{% if pokemon and pokemon.weight_kg %}{{ pokemon.weight_kg }}{% endif %}"
+                    placeholder="例：95.0"
+                >
+            </div>
+
+            <div class="form-field">
+                <label>アイコン画像</label>
+                <input type="file" name="icon_image" accept="image/*">
+                {% if pokemon and pokemon.icon_image %}
+                    <p class="form-help">現在の画像：{{ pokemon.icon_image.name }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section stat-form-section">
+        <h2>種族値</h2>
+
+        <div class="points-grid">
+            <div class="form-field">
+                <label>HP</label>
+                <input type="number" name="base_hp" min="1" value="{% if pokemon %}{{ pokemon.base_hp }}{% else %}1{% endif %}" required>
+            </div>
+
+            <div class="form-field">
+                <label>攻撃</label>
+                <input type="number" name="base_attack" min="1" value="{% if pokemon %}{{ pokemon.base_attack }}{% else %}1{% endif %}" required>
+            </div>
+
+            <div class="form-field">
+                <label>防御</label>
+                <input type="number" name="base_defense" min="1" value="{% if pokemon %}{{ pokemon.base_defense }}{% else %}1{% endif %}" required>
+            </div>
+
+            <div class="form-field">
+                <label>特攻</label>
+                <input type="number" name="base_sp_attack" min="1" value="{% if pokemon %}{{ pokemon.base_sp_attack }}{% else %}1{% endif %}" required>
+            </div>
+
+            <div class="form-field">
+                <label>特防</label>
+                <input type="number" name="base_sp_defense" min="1" value="{% if pokemon %}{{ pokemon.base_sp_defense }}{% else %}1{% endif %}" required>
+            </div>
+
+            <div class="form-field">
+                <label>素早</label>
+                <input type="number" name="base_speed" min="1" value="{% if pokemon %}{{ pokemon.base_speed }}{% else %}1{% endif %}" required>
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section ability-form-section">
+        <h2>特性</h2>
+
+        <div class="form-grid three-columns">
+            <div class="form-field">
+                <label>特性1</label>
+                <input
+                    type="text"
+                    name="ability1"
+                    value="{% if pokemon %}{{ pokemon.ability1 }}{% endif %}"
+                    placeholder="例：すながくれ"
+                >
+            </div>
+
+            <div class="form-field">
+                <label>特性2</label>
+                <input
+                    type="text"
+                    name="ability2"
+                    value="{% if pokemon %}{{ pokemon.ability2 }}{% endif %}"
+                    placeholder="空欄可"
+                >
+            </div>
+
+            <div class="form-field">
+                <label>夢特性</label>
+                <input
+                    type="text"
+                    name="hidden_ability"
+                    value="{% if pokemon %}{{ pokemon.hidden_ability }}{% endif %}"
+                    placeholder="例：さめはだ"
+                >
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <h2>診断・メガ進化設定</h2>
+
+        <div class="form-grid two-columns">
+            <label class="checkbox-label">
+                <input
+                    type="checkbox"
+                    name="is_virtual_target"
+                    {% if pokemon and pokemon.is_virtual_target %}checked{% endif %}
+                >
+                仮想敵として扱う
+            </label>
+
+            <label class="checkbox-label">
+                <input
+                    type="checkbox"
+                    name="can_mega_evolve"
+                    {% if pokemon and pokemon.can_mega_evolve %}checked{% endif %}
+                >
+                メガ進化可能
+            </label>
+        </div>
+
+        <p class="form-help">
+            メガ進化前後の関連付けは、現時点では管理画面またはCSVで行います。
+        </p>
+    </section>
+
+    <div class="form-actions">
+        <button type="submit" class="primary-button">保存</button>
+        <a class="secondary-button" href="{% url 'pokemane:pokemon_list' %}">
+            キャンセル
+        </a>
+    </div>
+</form>
+{% endblock %}

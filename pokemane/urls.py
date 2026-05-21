@@ -24,4 +24,6 @@ urlpatterns = [
     ),
     path("sets/<int:set_id>/delete/", views.set_delete, name="set_delete"),
     path("parties/<int:party_id>/delete/", views.party_delete, name="party_delete"),
+    path("pokemon/new/", views.pokemon_form, name="pokemon_create"),
+    path("pokemon/<int:pokemon_id>/edit/", views.pokemon_form, name="pokemon_edit"),
 ]

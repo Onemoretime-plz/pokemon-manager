@@ -864,3 +864,57 @@ def party_delete(request, party_id):
     party.delete()
 
     return redirect("pokemane:party_list")
+
+def pokemon_form(request, pokemon_id=None):
+    """
+    ポケモンの新規登録・編集画面。
+    """
+    if pokemon_id:
+        pokemon = get_object_or_404(Pokemon, id=pokemon_id)
+        page_title = "ポケモン編集"
+    else:
+        pokemon = None
+        page_title = "ポケモン登録"
+
+    type_choices = get_type_choices_for_template()
+
+    if request.method == "POST":
+        if pokemon is None:
+            pokemon = Pokemon()
+
+        pokemon.national_dex_no = request.POST.get("national_dex_no") or None
+        pokemon.name = request.POST.get("name", "").strip()
+        pokemon.type1 = request.POST.get("type1", "").strip()
+        pokemon.type2 = request.POST.get("type2", "").strip() or None
+
+        pokemon.base_hp = int(request.POST.get("base_hp") or 0)
+        pokemon.base_attack = int(request.POST.get("base_attack") or 0)
+        pokemon.base_defense = int(request.POST.get("base_defense") or 0)
+        pokemon.base_sp_attack = int(request.POST.get("base_sp_attack") or 0)
+        pokemon.base_sp_defense = int(request.POST.get("base_sp_defense") or 0)
+        pokemon.base_speed = int(request.POST.get("base_speed") or 0)
+
+        pokemon.weight_kg = request.POST.get("weight_kg") or None
+
+        pokemon.ability1 = request.POST.get("ability1", "").strip()
+        pokemon.ability2 = request.POST.get("ability2", "").strip()
+        pokemon.hidden_ability = request.POST.get("hidden_ability", "").strip()
+
+        pokemon.is_virtual_target = request.POST.get("is_virtual_target") == "on"
+        pokemon.can_mega_evolve = request.POST.get("can_mega_evolve") == "on"
+
+        if request.FILES.get("icon_image"):
+            pokemon.icon_image = request.FILES["icon_image"]
+
+        pokemon.full_clean()
+        pokemon.save()
+
+        return redirect("pokemane:pokemon_list")
+
+    context = {
+        "page_title": page_title,
+        "pokemon": pokemon,
+        "type_choices": type_choices,
+    }
+
+    return render(request, "pokemane/pokemon_form.html", context)
