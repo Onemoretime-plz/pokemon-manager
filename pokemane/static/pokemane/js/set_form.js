@@ -221,6 +221,59 @@ function initializePokemonIconPreviews() {
     });
 }
 
+function filterPokemonSelectOptions(inputElement) {
+    const targetSelectId = inputElement.dataset.filterTarget;
+
+    if (!targetSelectId) {
+        return;
+    }
+
+    const selectElement = document.getElementById(targetSelectId);
+
+    if (!selectElement) {
+        return;
+    }
+
+    const keyword = inputElement.value.trim().toLowerCase();
+    const options = selectElement.querySelectorAll("option");
+
+    options.forEach((option) => {
+        if (!option.value) {
+            option.hidden = false;
+            return;
+        }
+
+        const searchText = (option.dataset.searchText || option.textContent || "").toLowerCase();
+
+        if (!keyword || searchText.includes(keyword)) {
+            option.hidden = false;
+        } else {
+            option.hidden = true;
+        }
+    });
+
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+    if (selectedOption && selectedOption.hidden) {
+        selectElement.value = "";
+        updatePokemonIconPreview(selectElement);
+    }
+}
+
+function attachPokemonSelectFilter(inputElement) {
+    inputElement.addEventListener("input", () => {
+        filterPokemonSelectOptions(inputElement);
+    });
+}
+
+function initializePokemonSelectFilters() {
+    const filterInputs = document.querySelectorAll(".pokemon-option-filter");
+
+    filterInputs.forEach((inputElement) => {
+        attachPokemonSelectFilter(inputElement);
+    });
+}
+
 function addDynamicRow(templateId, gridId, countInputId) {
     const template = document.getElementById(templateId);
     const grid = document.getElementById(gridId);
@@ -245,6 +298,12 @@ function addDynamicRow(templateId, gridId, countInputId) {
 
     if (select) {
         attachPokemonIconPreview(select);
+    }
+
+    const filterInput = newRow.querySelector(".pokemon-option-filter");
+
+    if (filterInput) {
+        attachPokemonSelectFilter(filterInput);
     }
 }
 
@@ -439,6 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializePokemonIconPreviews();
     initializeDynamicRowRemoveButtons();
     initializeStatPreview();
+    initializePokemonSelectFilters();
 
     if (pokemonSelect) {
         pokemonSelect.addEventListener("change", handlePokemonChange);

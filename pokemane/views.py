@@ -591,6 +591,7 @@ def set_form(request, set_id=None):
         page_title = "型登録"
 
     pokemons = Pokemon.objects.order_by("national_dex_no", "name")
+    target_pokemons = Pokemon.objects.order_by("name", "national_dex_no")
     mega_evolutions = MegaEvolution.objects.select_related(
         "base_pokemon",
         "mega_pokemon",
@@ -771,6 +772,7 @@ def set_form(request, set_id=None):
         "page_title": page_title,
         "pokemon_set": pokemon_set,
         "pokemons": pokemons,
+        "target_pokemons": target_pokemons,
         "mega_evolutions": mega_evolutions,
         "type_choices": get_type_choices_for_template(),
         "nature_stat_choices": get_nature_stat_choices_for_template(),

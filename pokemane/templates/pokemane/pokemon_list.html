@@ -119,18 +119,6 @@
                     {% endif %}
                 </div>
 
-                <div>
-                    メガ進化先：
-                    {% if pokemon.mega_evolution_pokemon %}
-                        {{ pokemon.mega_evolution_pokemon.name }}
-                    {% else %}
-                        なし
-                    {% endif %}
-                </div>
-
-                {% if pokemon.pre_mega_pokemon %}
-                    <div>メガ進化前：{{ pokemon.pre_mega_pokemon.name }}</div>
-                {% endif %}
             </div>
 
             <div class="card-actions">
