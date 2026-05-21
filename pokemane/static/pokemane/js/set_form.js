@@ -249,6 +249,28 @@ function addDynamicRow(templateId, gridId, countInputId) {
 }
 
 
+function removeDynamicRow(button) {
+    const row = button.closest(".matchup-form-row, .weak-matchup-form-row");
+
+    if (!row) {
+        return;
+    }
+
+    row.remove();
+}
+
+function initializeDynamicRowRemoveButtons() {
+    document.addEventListener("click", (event) => {
+        const button = event.target.closest(".remove-dynamic-row-button");
+
+        if (!button) {
+            return;
+        }
+
+        removeDynamicRow(button);
+    });
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const pokemonSelect = document.getElementById("pokemon-select");
@@ -260,6 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateAbilityOptions();
     updateMegaOptions();
     initializePokemonIconPreviews();
+    initializeDynamicRowRemoveButtons();
 
     if (pokemonSelect) {
         pokemonSelect.addEventListener("change", handlePokemonChange);

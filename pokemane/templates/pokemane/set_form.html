@@ -340,9 +340,18 @@
                 placeholder="例：後投げ安定、型次第など"
             >
         </div>
+
+        <div class="row-action-field">
+            <button
+                type="button"
+                class="danger-button remove-dynamic-row-button"
+            >
+                削除
+            </button>
+        </div>
+
     </div>
 </template>
-
 
 <section class="form-section weak-matchup-section">
     <h2>苦手対象</h2>
@@ -416,7 +425,6 @@
 
 </section>
 
-
 <template id="weak-matchup-row-template">
     <div class="weak-matchup-form-row">
         <div class="matchup-number">苦手__number__</div>
@@ -462,7 +470,6 @@
     </div>
 </template>
 
-
     <section class="form-section">
         <h2>メモ</h2>
 
@@ -487,5 +494,5 @@
     window.POKEMANE_POKEMON_MEGAS = {{ pokemon_mega_map_json|safe }};
     window.POKEMANE_POKEMON_ICONS = {{ pokemon_icon_map_json|safe }};
 </script>
-<script src="{% static 'pokemane/js/set_form.js' %}?v=5"></script>
+<script src="{% static 'pokemane/js/set_form.js' %}?v=6"></script>
 {% endblock %}
