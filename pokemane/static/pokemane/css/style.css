@@ -1152,3 +1152,12 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
+.disabled-field {
+    opacity: 0.55;
+}
+
+.mini-help {
+    margin: 4px 0 0;
+    font-size: 12px;
+}

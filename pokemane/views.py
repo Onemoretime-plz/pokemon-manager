@@ -648,6 +648,28 @@ def set_form(request, set_id=None):
 
         return redirect("pokemane:set_list")
 
+    pokemon_ability_map = {}
+    pokemon_mega_map = {}
+
+    for pokemon in pokemons:
+        abilities = pokemon.ability_options()
+
+        pokemon_ability_map[str(pokemon.id)] = abilities
+
+    for mega in mega_evolutions:
+        base_id = str(mega.base_pokemon_id)
+
+        if base_id not in pokemon_mega_map:
+            pokemon_mega_map[base_id] = []
+
+        pokemon_mega_map[base_id].append(
+            {
+                "id": mega.id,
+                "label": f"{mega.mega_pokemon.name}"
+                + (f"（{mega.form_name}）" if mega.form_name else ""),
+            }
+        )
+
     context = {
         "page_title": page_title,
         "pokemon_set": pokemon_set,
@@ -657,6 +679,8 @@ def set_form(request, set_id=None):
         "nature_stat_choices": get_nature_stat_choices_for_template(),
         "move_category_choices": get_move_category_choices_for_template(),
         "move_rows": build_move_form_rows(pokemon_set),
+        "pokemon_ability_map_json": json.dumps(pokemon_ability_map, ensure_ascii=False),
+        "pokemon_mega_map_json": json.dumps(pokemon_mega_map, ensure_ascii=False),
     }
 
     return render(request, "pokemane/set_form.html", context)

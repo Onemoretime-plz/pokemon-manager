@@ -1,4 +1,5 @@
 {% extends "pokemane/base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} | ポケマネ{% endblock %}
 
@@ -21,7 +22,7 @@
         <div class="form-grid two-columns">
             <div class="form-field">
                 <label>ポケモン</label>
-                <select name="pokemon" required>
+                <select name="pokemon" id="pokemon-select" required>
                     <option value="">選択してください</option>
                     {% for pokemon in pokemons %}
                         <option
@@ -48,13 +49,14 @@
 
             <div class="form-field">
                 <label>特性</label>
-                <input
-                    type="text"
+                <select
                     name="ability_name"
-                    value="{% if pokemon_set %}{{ pokemon_set.ability_name }}{% endif %}"
+                    id="ability-select"
+                    data-current-ability="{% if pokemon_set %}{{ pokemon_set.ability_name }}{% endif %}"
                     required
-                    placeholder="例：さめはだ"
                 >
+                    <option value="">ポケモンを選択してください</option>
+                </select>
             </div>
 
             <div class="form-field">
@@ -73,25 +75,22 @@
                 <input
                     type="checkbox"
                     name="is_mega_stone"
+                    id="mega-stone-checkbox"
                     {% if pokemon_set and pokemon_set.is_mega_stone %}checked{% endif %}
                 >
                 メガストーン
             </label>
 
-            <div class="form-field">
+            <div class="form-field" id="mega-evolution-field">
                 <label>選択メガ進化先</label>
-                <select name="selected_mega_evolution">
+                <select
+                    name="selected_mega_evolution"
+                    id="mega-evolution-select"
+                    data-current-mega="{% if pokemon_set and pokemon_set.selected_mega_evolution_id %}{{ pokemon_set.selected_mega_evolution_id }}{% endif %}"
+                >
                     <option value="">なし</option>
-                    {% for mega in mega_evolutions %}
-                        <option
-                            value="{{ mega.id }}"
-                            {% if pokemon_set and pokemon_set.selected_mega_evolution_id == mega.id %}selected{% endif %}
-                        >
-                            {{ mega.base_pokemon.name }} → {{ mega.mega_pokemon.name }}
-                            {% if mega.form_name %}（{{ mega.form_name }}）{% endif %}
-                        </option>
-                    {% endfor %}
                 </select>
+                <p class="form-help mini-help" id="mega-evolution-help"></p>
             </div>
         </div>
     </section>
@@ -219,4 +218,12 @@
         <a class="secondary-button" href="{% url 'pokemane:set_list' %}">キャンセル</a>
     </div>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.POKEMANE_POKEMON_ABILITIES = {{ pokemon_ability_map_json|safe }};
+    window.POKEMANE_POKEMON_MEGAS = {{ pokemon_mega_map_json|safe }};
+</script>
+<script src="{% static 'pokemane/js/set_form.js' %}?v=1"></script>
 {% endblock %}
