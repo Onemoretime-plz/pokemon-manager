@@ -730,6 +730,17 @@ def set_form(request, set_id=None):
     pokemon_ability_map = {}
     pokemon_mega_map = {}
     pokemon_icon_map = {}
+    pokemon_stats_map = {}
+
+    for pokemon in pokemons:
+        pokemon_stats_map[str(pokemon.id)] = {
+            "hp": pokemon.base_hp,
+            "attack": pokemon.base_attack,
+            "defense": pokemon.base_defense,
+            "sp_attack": pokemon.base_sp_attack,
+            "sp_defense": pokemon.base_sp_defense,
+            "speed": pokemon.base_speed,
+        }
 
     for pokemon in pokemons:
         pokemon_icon_map[str(pokemon.id)] = {
@@ -771,6 +782,8 @@ def set_form(request, set_id=None):
         "matchup_rows": build_matchup_form_rows(pokemon_set),
         "weak_matchup_rows": build_weak_matchup_form_rows(pokemon_set),
         "pokemon_icon_map_json": json.dumps(pokemon_icon_map, ensure_ascii=False),
+        "pokemon_stats_map_json": json.dumps(pokemon_stats_map, ensure_ascii=False),
+
     }
 
     return render(request, "pokemane/set_form.html", context)

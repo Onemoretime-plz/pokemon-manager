@@ -271,6 +271,161 @@ function initializeDynamicRowRemoveButtons() {
     });
 }
 
+const STAT_KEYS = [
+    "hp",
+    "attack",
+    "defense",
+    "sp_attack",
+    "sp_defense",
+    "speed",
+];
+
+const STAT_DATASET_SUFFIX = {
+    hp: "Hp",
+    attack: "Attack",
+    defense: "Defense",
+    sp_attack: "SpAttack",
+    sp_defense: "SpDefense",
+    speed: "Speed",
+};
+
+function getNatureMultiplier(statKey) {
+    const natureUpSelect = document.getElementById("nature-up-select");
+    const natureDownSelect = document.getElementById("nature-down-select");
+
+    const up = natureUpSelect ? natureUpSelect.value : "none";
+    const down = natureDownSelect ? natureDownSelect.value : "none";
+
+    if (statKey === up) {
+        return 1.1;
+    }
+
+    if (statKey === down) {
+        return 0.9;
+    }
+
+    return 1.0;
+}
+
+function calculateActualStat(statKey, baseStat, point) {
+    const safeBase = Number(baseStat || 0);
+    const safePoint = Number(point || 0);
+
+    if (statKey === "hp") {
+        return Math.floor(((safeBase + safePoint) * 2 + 31) * 0.5 + 60);
+    }
+
+    const multiplier = getNatureMultiplier(statKey);
+
+    return Math.floor((((safeBase + safePoint) * 2 + 31) * 0.5 + 5) * multiplier);
+}
+
+function getPointValue(statKey) {
+    const input = document.querySelector(`.point-input[data-stat="${statKey}"]`);
+
+    if (!input) {
+        return 0;
+    }
+
+    let value = Number(input.value || 0);
+
+    if (value < 0) {
+        value = 0;
+        input.value = "0";
+    }
+
+    if (value > 32) {
+        value = 32;
+        input.value = "32";
+    }
+
+    return value;
+}
+
+function updateStatPreview() {
+    const pokemonSelect = document.getElementById("pokemon-select");
+
+    if (!pokemonSelect) {
+        return;
+    }
+
+    const pokemonId = pokemonSelect.value;
+    const statsMap = window.POKEMANE_POKEMON_STATS || {};
+    const baseStats = statsMap[pokemonId];
+
+    let pointTotal = 0;
+
+    STAT_KEYS.forEach((statKey) => {
+        const point = getPointValue(statKey);
+        pointTotal += point;
+
+        const suffix = STAT_DATASET_SUFFIX[statKey];
+        const baseElement = document.getElementById(`base-${statKey.replaceAll("_", "-")}`);
+        const pointElement = document.getElementById(`point-${statKey.replaceAll("_", "-")}`);
+        const actualElement = document.getElementById(`actual-${statKey.replaceAll("_", "-")}`);
+
+        if (!baseStats) {
+            if (baseElement) baseElement.textContent = "-";
+            if (pointElement) pointElement.textContent = point;
+            if (actualElement) actualElement.textContent = "-";
+            return;
+        }
+
+        const baseStat = baseStats[statKey];
+        const actualStat = calculateActualStat(statKey, baseStat, point);
+
+        if (baseElement) baseElement.textContent = baseStat;
+        if (pointElement) pointElement.textContent = point;
+        if (actualElement) actualElement.textContent = actualStat;
+    });
+
+    const totalElement = document.getElementById("point-total");
+    const remainingElement = document.getElementById("point-remaining");
+    const warningElement = document.getElementById("point-warning");
+
+    if (totalElement) {
+        totalElement.textContent = pointTotal;
+    }
+
+    if (remainingElement) {
+        remainingElement.textContent = Math.max(66 - pointTotal, 0);
+    }
+
+    if (warningElement) {
+        if (pointTotal > 66) {
+            warningElement.classList.remove("hidden");
+        } else {
+            warningElement.classList.add("hidden");
+        }
+    }
+}
+
+function initializeStatPreview() {
+    const pointInputs = document.querySelectorAll(".point-input");
+    const natureUpSelect = document.getElementById("nature-up-select");
+    const natureDownSelect = document.getElementById("nature-down-select");
+    const pokemonSelect = document.getElementById("pokemon-select");
+
+    pointInputs.forEach((input) => {
+        input.addEventListener("input", updateStatPreview);
+    });
+
+    if (natureUpSelect) {
+        natureUpSelect.addEventListener("change", updateStatPreview);
+    }
+
+    if (natureDownSelect) {
+        natureDownSelect.addEventListener("change", updateStatPreview);
+    }
+
+    if (pokemonSelect) {
+        pokemonSelect.addEventListener("change", updateStatPreview);
+    }
+
+    updateStatPreview();
+}
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const pokemonSelect = document.getElementById("pokemon-select");
@@ -283,6 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateMegaOptions();
     initializePokemonIconPreviews();
     initializeDynamicRowRemoveButtons();
+    initializeStatPreview();
 
     if (pokemonSelect) {
         pokemonSelect.addEventListener("change", handlePokemonChange);

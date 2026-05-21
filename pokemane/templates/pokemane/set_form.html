@@ -101,7 +101,7 @@
         <div class="form-grid two-columns">
             <div class="form-field">
                 <label>上昇補正</label>
-                <select name="nature_up">
+                <select name="nature_up" id="nature-up-select">
                     {% for value, label in nature_stat_choices %}
                         <option
                             value="{{ value }}"
@@ -115,7 +115,7 @@
 
             <div class="form-field">
                 <label>下降補正</label>
-                <select name="nature_down">
+                <select name="nature_down" id="nature-down-select">
                     {% for value, label in nature_stat_choices %}
                         <option
                             value="{{ value }}"
@@ -131,31 +131,138 @@
         <div class="points-grid">
             <div class="form-field">
                 <label>HP</label>
-                <input type="number" name="point_hp" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_hp }}{% else %}0{% endif %}">
+                <input
+                    type="number"
+                    name="point_hp"
+                    class="point-input"
+                    data-stat="hp"
+                    min="0"
+                    max="32"
+                    value="{% if pokemon_set %}{{ pokemon_set.point_hp }}{% else %}0{% endif %}"
+                >
             </div>
             <div class="form-field">
                 <label>攻撃</label>
-                <input type="number" name="point_attack" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_attack }}{% else %}0{% endif %}">
+                <input
+                    type="number"
+                    name="point_attack"
+                    class="point-input"
+                    data-stat="attack"
+                    min="0"
+                    max="32"
+                    value="{% if pokemon_set %}{{ pokemon_set.point_attack }}{% else %}0{% endif %}"
+                >
             </div>
             <div class="form-field">
                 <label>防御</label>
-                <input type="number" name="point_defense" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_defense }}{% else %}0{% endif %}">
+                <input
+                    type="number"
+                    name="point_defense"
+                    class="point-input"
+                    data-stat="defense"
+                    min="0"
+                    max="32"
+                    value="{% if pokemon_set %}{{ pokemon_set.point_defense }}{% else %}0{% endif %}"
+                >
             </div>
             <div class="form-field">
                 <label>特攻</label>
-                <input type="number" name="point_sp_attack" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_sp_attack }}{% else %}0{% endif %}">
+                <input
+                    type="number"
+                    name="point_sp_attack"
+                    class="point-input"
+                    data-stat="sp_attack"
+                    min="0"
+                    max="32"
+                    value="{% if pokemon_set %}{{ pokemon_set.point_sp_attack }}{% else %}0{% endif %}"
+                >
             </div>
             <div class="form-field">
                 <label>特防</label>
-                <input type="number" name="point_sp_defense" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_sp_defense }}{% else %}0{% endif %}">
+                <input
+                    type="number"
+                    name="point_sp_defense"
+                    class="point-input"
+                    data-stat="sp_defense"
+                    min="0"
+                    max="32"
+                    value="{% if pokemon_set %}{{ pokemon_set.point_sp_defense }}{% else %}0{% endif %}"
+                >
             </div>
             <div class="form-field">
                 <label>素早</label>
-                <input type="number" name="point_speed" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_speed }}{% else %}0{% endif %}">
+                <input
+                    type="number"
+                    name="point_speed"
+                    class="point-input"
+                    data-stat="speed"
+                    min="0"
+                    max="32"
+                    value="{% if pokemon_set %}{{ pokemon_set.point_speed }}{% else %}0{% endif %}"
+                >
             </div>
         </div>
 
         <p class="form-help">能力ポイントは各ステータス最大32、合計66までです。</p>
+
+        <div class="stat-preview-card">
+          <div class="stat-preview-table-wrap">
+              <table class="stat-preview-table">
+                  <thead>
+                      <tr>
+                          <th></th>
+                          <th>HP</th>
+                          <th>攻撃</th>
+                          <th>防御</th>
+                          <th>特攻</th>
+                          <th>特防</th>
+                          <th>素早</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <th>種族値</th>
+                          <td id="base-hp">-</td>
+                          <td id="base-attack">-</td>
+                          <td id="base-defense">-</td>
+                          <td id="base-sp-attack">-</td>
+                          <td id="base-sp-defense">-</td>
+                          <td id="base-speed">-</td>
+                      </tr>
+                      <tr>
+                          <th>能力値</th>
+                          <td id="point-hp">0</td>
+                          <td id="point-attack">0</td>
+                          <td id="point-defense">0</td>
+                          <td id="point-sp-attack">0</td>
+                          <td id="point-sp-defense">0</td>
+                          <td id="point-speed">0</td>
+                      </tr>
+                      <tr>
+                          <th>実数値</th>
+                          <td id="actual-hp">-</td>
+                          <td id="actual-attack">-</td>
+                          <td id="actual-defense">-</td>
+                          <td id="actual-sp-attack">-</td>
+                          <td id="actual-sp-defense">-</td>
+                          <td id="actual-speed">-</td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+
+          <div class="point-summary">
+              <span>能力ポイント</span>
+              <strong id="point-total">0</strong>
+              <span>/ 66</span>
+              <span class="point-remaining-label">残り：</span>
+              <strong id="point-remaining">66</strong>
+          </div>
+
+          <p class="form-help warning-text hidden" id="point-warning">
+              能力ポイントの合計が66を超えています。
+          </p>
+      </div>
     </section>
 
     <section class="form-section move-section">
@@ -493,6 +600,7 @@
     window.POKEMANE_POKEMON_ABILITIES = {{ pokemon_ability_map_json|safe }};
     window.POKEMANE_POKEMON_MEGAS = {{ pokemon_mega_map_json|safe }};
     window.POKEMANE_POKEMON_ICONS = {{ pokemon_icon_map_json|safe }};
+    window.POKEMANE_POKEMON_STATS = {{ pokemon_stats_map_json|safe }};
 </script>
-<script src="{% static 'pokemane/js/set_form.js' %}?v=6"></script>
+<script src="{% static 'pokemane/js/set_form.js' %}?v=8"></script>
 {% endblock %}
