@@ -305,8 +305,88 @@ function addDynamicRow(templateId, gridId, countInputId) {
     if (filterInput) {
         attachPokemonSelectFilter(filterInput);
     }
+
+    if (gridId === "matchup-form-grid") {
+        renumberDynamicRows("matchup");
+    }
+
+    if (gridId === "weak-matchup-form-grid") {
+        renumberDynamicRows("weak");
+    }
 }
 
+
+function updateRowAttributes(row, rowType, number) {
+    const isMatchup = rowType === "matchup";
+    const labelPrefix = isMatchup ? "役割" : "苦手";
+    const targetNamePrefix = isMatchup ? "matchup_target" : "weak_target";
+    const memoNamePrefix = isMatchup ? "matchup_memo" : "weak_memo";
+    const iconPrefix = isMatchup ? "matchup-icon" : "weak-icon";
+    const selectPrefix = isMatchup ? "matchup-select" : "weak-select";
+
+    const numberElement = row.querySelector(".matchup-number");
+    if (numberElement) {
+        numberElement.textContent = `${labelPrefix}${number}`;
+    }
+
+    const targetSelect = row.querySelector(".pokemon-icon-select");
+    if (targetSelect) {
+        targetSelect.name = `${targetNamePrefix}_${number}`;
+        targetSelect.id = `${selectPrefix}-${number}`;
+        targetSelect.dataset.iconTarget = `${iconPrefix}-${number}`;
+    }
+
+    const filterInput = row.querySelector(".pokemon-option-filter");
+    if (filterInput) {
+        filterInput.dataset.filterTarget = `${selectPrefix}-${number}`;
+    }
+
+    const iconElement = row.querySelector(".selected-pokemon-icon");
+    if (iconElement) {
+        iconElement.id = `${iconPrefix}-${number}`;
+    }
+
+    const memoInput = row.querySelector(`input[name^="${memoNamePrefix}_"]`);
+    if (memoInput) {
+        memoInput.name = `${memoNamePrefix}_${number}`;
+    }
+
+    if (isMatchup) {
+        const methodSelect = row.querySelector('select[name^="matchup_method_"]');
+        if (methodSelect) {
+            methodSelect.name = `matchup_method_${number}`;
+        }
+    }
+}
+
+function renumberDynamicRows(rowType) {
+    const gridId = rowType === "matchup"
+        ? "matchup-form-grid"
+        : "weak-matchup-form-grid";
+
+    const countInputId = rowType === "matchup"
+        ? "matchup-count"
+        : "weak-matchup-count";
+
+    const rowSelector = rowType === "matchup"
+        ? ".matchup-form-row"
+        : ".weak-matchup-form-row";
+
+    const grid = document.getElementById(gridId);
+    const countInput = document.getElementById(countInputId);
+
+    if (!grid || !countInput) {
+        return;
+    }
+
+    const rows = grid.querySelectorAll(rowSelector);
+
+    rows.forEach((row, index) => {
+        updateRowAttributes(row, rowType, index + 1);
+    });
+
+    countInput.value = String(rows.length);
+}
 
 function removeDynamicRow(button) {
     const row = button.closest(".matchup-form-row, .weak-matchup-form-row");
@@ -315,7 +395,12 @@ function removeDynamicRow(button) {
         return;
     }
 
+    const isMatchupRow = row.classList.contains("matchup-form-row");
+    const rowType = isMatchupRow ? "matchup" : "weak";
+
     row.remove();
+
+    renumberDynamicRows(rowType);
 }
 
 function initializeDynamicRowRemoveButtons() {
@@ -499,6 +584,10 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeDynamicRowRemoveButtons();
     initializeStatPreview();
     initializePokemonSelectFilters();
+
+
+    renumberDynamicRows("matchup");
+    renumberDynamicRows("weak");
 
     if (pokemonSelect) {
         pokemonSelect.addEventListener("change", handlePokemonChange);
