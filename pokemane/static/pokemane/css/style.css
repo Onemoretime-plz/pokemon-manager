@@ -993,3 +993,7 @@ a {
 .mega-toggle-button:hover {
     filter: brightness(0.97);
 }
+
+.hidden {
+    display: none !important;
+}

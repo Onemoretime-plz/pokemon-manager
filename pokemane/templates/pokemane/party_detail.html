@@ -53,24 +53,53 @@
             {% else %}
                 {% with card=slot.card %}
                 <article
-                class="set-card party-set-card"
-                data-set-id="{{ card.set.id }}"
-                data-slot-number="{{ slot.slot_number }}"
-                data-mega-active="{% if card.is_mega_active %}true{% else %}false{% endif %}">
+                    class="set-card party-set-card"
+                    data-set-id="{{ card.set.id }}"
+                    data-slot-number="{{ slot.slot_number }}"
+                    data-mega-active="{% if card.is_mega_active %}true{% else %}false{% endif %}"
+
+                    data-base-name="{{ card.base_display.name }}"
+                    data-base-icon-url="{{ card.base_display.icon_url }}"
+                    data-base-type1="{{ card.base_display.type1 }}"
+                    data-base-type2="{{ card.base_display.type2 }}"
+                    data-base-type1-class="{{ card.base_display.type1_class }}"
+                    data-base-type2-class="{{ card.base_display.type2_class }}"
+                    data-base-ability="{{ card.base_display.ability }}"
+                    data-base-hp="{{ card.base_display.stats.hp }}"
+                    data-base-attack="{{ card.base_display.stats.attack }}"
+                    data-base-defense="{{ card.base_display.stats.defense }}"
+                    data-base-sp-attack="{{ card.base_display.stats.sp_attack }}"
+                    data-base-sp-defense="{{ card.base_display.stats.sp_defense }}"
+                    data-base-speed="{{ card.base_display.stats.speed }}"
+
+                    data-mega-name="{{ card.mega_display.name }}"
+                    data-mega-icon-url="{{ card.mega_display.icon_url }}"
+                    data-mega-type1="{{ card.mega_display.type1 }}"
+                    data-mega-type2="{{ card.mega_display.type2 }}"
+                    data-mega-type1-class="{{ card.mega_display.type1_class }}"
+                    data-mega-type2-class="{{ card.mega_display.type2_class }}"
+                    data-mega-ability="{{ card.mega_display.ability }}"
+                    data-mega-hp="{{ card.mega_display.stats.hp }}"
+                    data-mega-attack="{{ card.mega_display.stats.attack }}"
+                    data-mega-defense="{{ card.mega_display.stats.defense }}"
+                    data-mega-sp-attack="{{ card.mega_display.stats.sp_attack }}"
+                    data-mega-sp-defense="{{ card.mega_display.stats.sp_defense }}"
+                    data-mega-speed="{{ card.mega_display.stats.speed }}"
+                >
                     <div class="slot-number-label">Slot {{ slot.slot_number }}</div>
 
                     <div class="set-card-header">
                         <div class="pokemon-icon-wrap">
                             {% if card.pokemon.icon_image %}
-                                <img src="{{ card.pokemon.icon_image.url }}" alt="{{ card.pokemon.name }}" class="pokemon-icon">
+                                <img src="{{ card.pokemon.icon_image.url }}" alt="{{ card.pokemon.name }}" class="pokemon-icon card-pokemon-icon">
                             {% else %}
-                                <div class="pokemon-icon placeholder">No Image</div>
+                                <div class="pokemon-icon placeholder card-pokemon-icon-placeholder">No Image</div>
                             {% endif %}
                         </div>
 
                         <div class="set-title-block">
                             <div class="pokemon-name-row">
-                                <h2>{{ card.pokemon.name }}</h2>
+                                <h2 class="card-pokemon-name">{{ card.pokemon.name }}</h2>
                                 {% if card.set.is_mega_stone %}
                                     <button
                                         type="button"
@@ -85,27 +114,28 @@
 
                             <div class="set-name">{{ card.set.set_name }}</div>
 
-                            <div class="type-row">
-                                <span class="type-badge {{ card.type1_class }}">{{ card.pokemon.type1 }}</span>
-                                {% if card.pokemon.type2 %}
-                                    <span class="type-badge {{ card.type2_class }}">{{ card.pokemon.type2 }}</span>
-                                {% endif %}
+                            <div class="type-row card-type-row">
+                                <span class="type-badge {{ card.type1_class }} card-type1">{{ card.pokemon.type1 }}</span>
+
+                                <span class="type-badge {{ card.type2_class }} card-type2 {% if not card.pokemon.type2 %}hidden{% endif %}">
+                                    {{ card.pokemon.type2 }}
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     <div class="set-info">
-                        <div>特性：{{ card.set.ability_name }}</div>
+                        <div>特性：<span class="card-ability-name">{{ card.set.ability_name }}</span></div>
                         <div>持ち物：{{ card.set.item_name }}</div>
                     </div>
 
                     <div class="stats-row">
-                        <span>{{ card.stats.hp }}</span>
-                        <span>{{ card.stats.attack }}</span>
-                        <span>{{ card.stats.defense }}</span>
-                        <span>{{ card.stats.sp_attack }}</span>
-                        <span>{{ card.stats.sp_defense }}</span>
-                        <span>{{ card.stats.speed }}</span>
+                        <span class="card-stat-hp">{{ card.stats.hp }}</span>
+                        <span class="card-stat-attack">{{ card.stats.attack }}</span>
+                        <span class="card-stat-defense">{{ card.stats.defense }}</span>
+                        <span class="card-stat-sp-attack">{{ card.stats.sp_attack }}</span>
+                        <span class="card-stat-sp-defense">{{ card.stats.sp_defense }}</span>
+                        <span class="card-stat-speed">{{ card.stats.speed }}</span>
                     </div>
 
                     <div class="stats-label-row">
@@ -212,5 +242,5 @@
     window.POKEMANE_CLEAR_SLOT_API_URL = "{% url 'pokemane:clear_party_slot_api' party.id %}";
     window.POKEMANE_SET_SLOT_API_URL = "{% url 'pokemane:set_party_slot_api' party.id %}";
 </script>
-<script src="{% static 'pokemane/js/party_detail.js' %}?v=3"></script>
+<script src="{% static 'pokemane/js/party_detail.js' %}?v=7"></script>
 {% endblock %}

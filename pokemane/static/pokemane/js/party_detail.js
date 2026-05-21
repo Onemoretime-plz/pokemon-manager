@@ -211,6 +211,134 @@ function filterSetOptions(keyword) {
     });
 }
 
+function replaceTypeClass(element, newClass) {
+    if (!element) {
+        return;
+    }
+
+    const typeColorClasses = [
+        "type-normal",
+        "type-fire",
+        "type-water",
+        "type-electric",
+        "type-grass",
+        "type-ice",
+        "type-fighting",
+        "type-poison",
+        "type-ground",
+        "type-flying",
+        "type-psychic",
+        "type-bug",
+        "type-rock",
+        "type-ghost",
+        "type-dragon",
+        "type-dark",
+        "type-steel",
+        "type-fairy",
+        "type-unknown",
+    ];
+
+    typeColorClasses.forEach((className) => {
+        element.classList.remove(className);
+    });
+
+    if (newClass) {
+        element.classList.add(newClass);
+    }
+
+    element.classList.add("type-badge");
+}
+
+function updateCardDisplayForMegaState(card, megaActive) {
+    const prefix = megaActive ? "mega" : "base";
+
+    const pokemonName = card.dataset[`${prefix}Name`];
+    const iconUrl = card.dataset[`${prefix}IconUrl`];
+    const type1 = card.dataset[`${prefix}Type1`];
+    const type2 = card.dataset[`${prefix}Type2`];
+    const type1Class = card.dataset[`${prefix}Type1Class`];
+    const type2Class = card.dataset[`${prefix}Type2Class`];
+    const ability = card.dataset[`${prefix}Ability`];
+
+    const nameElement = card.querySelector(".card-pokemon-name");
+    if (nameElement) {
+        nameElement.textContent = pokemonName;
+    }
+
+    const iconElement = card.querySelector(".card-pokemon-icon");
+    const placeholderElement = card.querySelector(".card-pokemon-icon-placeholder");
+
+    if (iconElement) {
+        if (iconUrl) {
+            iconElement.src = iconUrl;
+            iconElement.alt = pokemonName;
+            iconElement.classList.remove("hidden");
+        } else {
+            iconElement.classList.add("hidden");
+        }
+    }
+
+    if (placeholderElement) {
+        if (iconUrl) {
+            placeholderElement.classList.add("hidden");
+        } else {
+            placeholderElement.classList.remove("hidden");
+        }
+    }
+
+    const type1Element = card.querySelector(".card-type1");
+    if (type1Element) {
+        type1Element.textContent = type1;
+        replaceTypeClass(type1Element, type1Class);
+    }
+
+    const type2Element = card.querySelector(".card-type2");
+    if (type2Element) {
+        type2Element.textContent = type2;
+        replaceTypeClass(type2Element, type2Class);
+
+        if (type2) {
+            type2Element.classList.remove("hidden");
+        } else {
+            type2Element.classList.add("hidden");
+        }
+    }
+
+    const abilityElement = card.querySelector(".card-ability-name");
+    if (abilityElement) {
+        abilityElement.textContent = ability;
+    }
+
+    const statMap = {
+        hp: "Hp",
+        attack: "Attack",
+        defense: "Defense",
+        spAttack: "SpAttack",
+        spDefense: "SpDefense",
+        speed: "Speed",
+    };
+
+    const statSelectors = {
+        hp: ".card-stat-hp",
+        attack: ".card-stat-attack",
+        defense: ".card-stat-defense",
+        spAttack: ".card-stat-sp-attack",
+        spDefense: ".card-stat-sp-defense",
+        speed: ".card-stat-speed",
+    };
+
+    Object.entries(statSelectors).forEach(([key, selector]) => {
+        const element = card.querySelector(selector);
+
+        if (!element) {
+            return;
+        }
+
+        const datasetKey = `${prefix}${statMap[key]}`;
+        element.textContent = card.dataset[datasetKey];
+    });
+}
+
 function toggleMegaState(button) {
     const slotNumber = button.dataset.slotNumber;
     const card = document.querySelector(
@@ -236,6 +364,7 @@ function toggleMegaState(button) {
         button.classList.remove("is-active");
     }
 
+    updateCardDisplayForMegaState(card, nextMegaActive);
     refreshDiagnosis();
 }
 

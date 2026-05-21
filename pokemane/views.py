@@ -25,14 +25,21 @@ SORT_LABELS = {
 }
 
 
-def build_set_card_data(pokemon_set):
+def build_set_card_data(pokemon_set, mega_active=True):
     """
-    型一覧画面で表示・並べ替えしやすい形に変換する。
+    型一覧・パーティー詳細で表示しやすい形に変換する。
+    メガストーン型の場合は、メガ前/メガ後の表示データも持たせる。
     """
-    summary = build_stats_summary(pokemon_set, mega_active=True)
-    stats = summary["actual_stats"]
+    effective_pokemon = get_effective_pokemon(
+        pokemon_set,
+        mega_active=mega_active,
+    )
 
-    effective_pokemon = get_effective_pokemon(pokemon_set, mega_active=True)
+    summary = build_stats_summary(
+        pokemon_set,
+        mega_active=mega_active,
+    )
+    stats = summary["actual_stats"]
 
     moves = []
     for move in pokemon_set.moves.all():
@@ -48,11 +55,29 @@ def build_set_card_data(pokemon_set):
             }
         )
 
+    base_summary = build_stats_summary(
+        pokemon_set,
+        mega_active=False,
+    )
+    base_pokemon = get_effective_pokemon(
+        pokemon_set,
+        mega_active=False,
+    )
+
+    mega_pokemon = get_effective_pokemon(
+        pokemon_set,
+        mega_active=True,
+    )
+    mega_summary = build_stats_summary(
+        pokemon_set,
+        mega_active=True,
+    )
+
     return {
         "set": pokemon_set,
         "pokemon": effective_pokemon,
         "original_pokemon": pokemon_set.pokemon,
-        "is_mega_active": pokemon_set.is_mega_stone and pokemon_set.selected_mega_evolution is not None,
+        "is_mega_active": mega_active and pokemon_set.is_mega_stone and pokemon_set.selected_mega_evolution is not None,
         "type1_class": get_type_class(effective_pokemon.type1),
         "type2_class": get_type_class(effective_pokemon.type2) if effective_pokemon.type2 else "",
         "stats": stats,
@@ -61,8 +86,29 @@ def build_set_card_data(pokemon_set):
         "overall_bulk": summary["overall_bulk"],
         "speed_for_sort": summary["speed_for_sort"],
         "moves": moves,
-    }
 
+        # メガ切替表示用
+        "base_display": {
+            "name": base_pokemon.name,
+            "icon_url": base_pokemon.icon_image.url if base_pokemon.icon_image else "",
+            "type1": base_pokemon.type1,
+            "type2": base_pokemon.type2 or "",
+            "type1_class": get_type_class(base_pokemon.type1),
+            "type2_class": get_type_class(base_pokemon.type2) if base_pokemon.type2 else "",
+            "ability": pokemon_set.ability_name,
+            "stats": base_summary["actual_stats"],
+        },
+        "mega_display": {
+            "name": mega_pokemon.name,
+            "icon_url": mega_pokemon.icon_image.url if mega_pokemon.icon_image else "",
+            "type1": mega_pokemon.type1,
+            "type2": mega_pokemon.type2 or "",
+            "type1_class": get_type_class(mega_pokemon.type1),
+            "type2_class": get_type_class(mega_pokemon.type2) if mega_pokemon.type2 else "",
+            "ability": mega_pokemon.ability1 or pokemon_set.ability_name,
+            "stats": mega_summary["actual_stats"],
+        },
+    }
 
 def set_list(request):
     query = request.GET.get("q", "").strip()
