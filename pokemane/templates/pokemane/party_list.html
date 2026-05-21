@@ -71,8 +71,21 @@
             </div>
 
             <div class="card-actions">
-                <a href="{% url 'pokemane:party_detail' party.id %}">編集・診断</a>
-                <a href="/admin/pokemane/party/{{ party.id }}/delete/">削除</a>
+                <a class="primary-button small-button" href="{% url 'pokemane:party_detail' party.id %}">
+                    編集・診断
+                </a>
+
+                <form
+                    method="post"
+                    action="{% url 'pokemane:party_delete' party.id %}"
+                    class="inline-delete-form"
+                    onsubmit="return confirm('このパーティーを削除しますか？');"
+                >
+                    {% csrf_token %}
+                    <button type="submit" class="danger-button small-delete-button">
+                        削除
+                    </button>
+                </form>
             </div>
         </article>
         {% endwith %}

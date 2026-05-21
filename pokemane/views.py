@@ -850,3 +850,17 @@ def build_weak_matchup_form_rows(pokemon_set=None):
         )
 
     return rows
+
+@require_POST
+def set_delete(request, set_id):
+    pokemon_set = get_object_or_404(PokemonSet, id=set_id)
+    pokemon_set.delete()
+
+    return redirect("pokemane:set_list")
+
+@require_POST
+def party_delete(request, party_id):
+    party = get_object_or_404(Party, id=party_id)
+    party.delete()
+
+    return redirect("pokemane:party_list")

@@ -1739,3 +1739,39 @@ a {
     color: #b91c1c;
     font-weight: 700;
 }
+
+.inline-delete-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.small-delete-button {
+    min-height: 34px;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 12px;
+}
+
+@media (max-width: 480px) {
+    .card-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .card-actions a,
+    .card-actions button,
+    .inline-delete-form {
+        width: 100%;
+    }
+
+    .inline-delete-form button {
+        width: 100%;
+    }
+}

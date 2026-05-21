@@ -104,7 +104,17 @@
 
             <div class="card-actions">
                 <a href="{% url 'pokemane:set_edit' card.set.id %}">編集</a>
-                <a href="/admin/pokemane/pokemonset/{{ card.set.id }}/delete/">削除</a>
+                <form
+                    method="post"
+                    action="{% url 'pokemane:set_delete' card.set.id %}"
+                    class="inline-delete-form"
+                    onsubmit="return confirm('この型を削除しますか？');"
+                >
+                    {% csrf_token %}
+                    <button type="submit" class="danger-button small-delete-button">
+                        削除
+                    </button>
+                </form>
             </div>
         </article>
     {% empty %}
