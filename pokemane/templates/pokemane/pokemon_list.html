@@ -138,9 +138,17 @@
                     編集
                 </a>
 
-                <a class="danger-button small-delete-button" href="/admin/pokemane/pokemon/{{ pokemon.id }}/delete/">
-                    削除
-                </a>
+                <form
+                    method="post"
+                    action="{% url 'pokemane:pokemon_delete' pokemon.id %}"
+                    class="inline-delete-form"
+                    onsubmit="return confirm('このポケモンを削除しますか？ 関連する型やメガ進化設定に影響する可能性があります。');"
+                >
+                    {% csrf_token %}
+                    <button type="submit" class="danger-button small-delete-button">
+                        削除
+                    </button>
+                </form>
             </div>
         </article>
         {% endwith %}

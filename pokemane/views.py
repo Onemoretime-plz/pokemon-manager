@@ -918,3 +918,10 @@ def pokemon_form(request, pokemon_id=None):
     }
 
     return render(request, "pokemane/pokemon_form.html", context)
+
+@require_POST
+def pokemon_delete(request, pokemon_id):
+    pokemon = get_object_or_404(Pokemon, id=pokemon_id)
+    pokemon.delete()
+
+    return redirect("pokemane:pokemon_list")
