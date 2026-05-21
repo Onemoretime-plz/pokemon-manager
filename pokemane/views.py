@@ -1,12 +1,11 @@
 import json
 
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
-from django.shortcuts import get_object_or_404, render
 
-from .models import Party, Pokemon, PokemonSet
+from .models import MegaEvolution, Party, Pokemon, PokemonSet, SetMove
 from .services.diagnosis import diagnose_party, diagnose_slots
 from .services.stats import build_stats_summary, get_effective_pokemon
 from .services.type_styles import get_type_class
@@ -496,3 +495,168 @@ def set_party_slot_api(request, party_id):
             "set_id": pokemon_set.id,
         }
     )
+
+def get_type_choices_for_template():
+    return [
+        "ノーマル",
+        "ほのお",
+        "みず",
+        "でんき",
+        "くさ",
+        "こおり",
+        "かくとう",
+        "どく",
+        "じめん",
+        "ひこう",
+        "エスパー",
+        "むし",
+        "いわ",
+        "ゴースト",
+        "ドラゴン",
+        "あく",
+        "はがね",
+        "フェアリー",
+    ]
+
+
+def get_nature_stat_choices_for_template():
+    return [
+        ("none", "なし"),
+        ("attack", "攻撃"),
+        ("defense", "防御"),
+        ("sp_attack", "特攻"),
+        ("sp_defense", "特防"),
+        ("speed", "素早さ"),
+    ]
+
+
+def get_move_category_choices_for_template():
+    return [
+        ("attack", "攻撃技"),
+        ("status", "変化技"),
+    ]
+
+
+def build_move_form_rows(pokemon_set=None):
+    """
+    技1〜4の入力欄用データを作る。
+    """
+    existing_moves = []
+
+    if pokemon_set:
+        existing_moves = list(pokemon_set.moves.all())
+
+    rows = []
+
+    for index in range(4):
+        move = existing_moves[index] if index < len(existing_moves) else None
+
+        rows.append(
+            {
+                "number": index + 1,
+                "move_name": move.move_name if move else "",
+                "move_type": move.move_type if move else "ノーマル",
+                "move_category": move.move_category if move else "attack",
+            }
+        )
+
+    return rows
+
+def set_form(request, set_id=None):
+    """
+    型の新規登録・編集画面。
+
+    まずは基本情報と技4つまで対応する。
+    役割対象・苦手対象は次工程で追加する。
+    """
+    if set_id:
+        pokemon_set = get_object_or_404(
+            PokemonSet.objects.select_related(
+                "pokemon",
+                "selected_mega_evolution",
+            ).prefetch_related("moves"),
+            id=set_id,
+        )
+        page_title = "型編集"
+    else:
+        pokemon_set = None
+        page_title = "型登録"
+
+    pokemons = Pokemon.objects.order_by("national_dex_no", "name")
+    mega_evolutions = MegaEvolution.objects.select_related(
+        "base_pokemon",
+        "mega_pokemon",
+    ).order_by("base_pokemon__national_dex_no", "base_pokemon__name")
+
+    if request.method == "POST":
+        pokemon_id = request.POST.get("pokemon")
+        pokemon = get_object_or_404(Pokemon, id=pokemon_id)
+
+        is_mega_stone = request.POST.get("is_mega_stone") == "on"
+        selected_mega_evolution = None
+
+        selected_mega_evolution_id = request.POST.get("selected_mega_evolution")
+
+        if is_mega_stone and selected_mega_evolution_id:
+            selected_mega_evolution = get_object_or_404(
+                MegaEvolution,
+                id=selected_mega_evolution_id,
+            )
+
+        if pokemon_set is None:
+            pokemon_set = PokemonSet()
+
+        pokemon_set.pokemon = pokemon
+        pokemon_set.set_name = request.POST.get("set_name", "").strip()
+        pokemon_set.ability_name = request.POST.get("ability_name", "").strip()
+        pokemon_set.is_mega_stone = is_mega_stone
+        pokemon_set.selected_mega_evolution = selected_mega_evolution
+        pokemon_set.custom_item_name = request.POST.get("custom_item_name", "").strip()
+
+        pokemon_set.nature_up = request.POST.get("nature_up", "none")
+        pokemon_set.nature_down = request.POST.get("nature_down", "none")
+
+        pokemon_set.point_hp = int(request.POST.get("point_hp") or 0)
+        pokemon_set.point_attack = int(request.POST.get("point_attack") or 0)
+        pokemon_set.point_defense = int(request.POST.get("point_defense") or 0)
+        pokemon_set.point_sp_attack = int(request.POST.get("point_sp_attack") or 0)
+        pokemon_set.point_sp_defense = int(request.POST.get("point_sp_defense") or 0)
+        pokemon_set.point_speed = int(request.POST.get("point_speed") or 0)
+
+        pokemon_set.memo = request.POST.get("memo", "").strip()
+
+        pokemon_set.full_clean()
+        pokemon_set.save()
+
+        # いったん既存技を削除して、4枠を再作成する。
+        pokemon_set.moves.all().delete()
+
+        for number in range(1, 5):
+            move_name = request.POST.get(f"move_name_{number}", "").strip()
+            move_type = request.POST.get(f"move_type_{number}", "").strip()
+            move_category = request.POST.get(f"move_category_{number}", "attack")
+
+            if not move_name:
+                continue
+
+            SetMove.objects.create(
+                pokemon_set=pokemon_set,
+                move_name=move_name,
+                move_type=move_type,
+                move_category=move_category,
+            )
+
+        return redirect("pokemane:set_list")
+
+    context = {
+        "page_title": page_title,
+        "pokemon_set": pokemon_set,
+        "pokemons": pokemons,
+        "mega_evolutions": mega_evolutions,
+        "type_choices": get_type_choices_for_template(),
+        "nature_stat_choices": get_nature_stat_choices_for_template(),
+        "move_category_choices": get_move_category_choices_for_template(),
+        "move_rows": build_move_form_rows(pokemon_set),
+    }
+
+    return render(request, "pokemane/set_form.html", context)

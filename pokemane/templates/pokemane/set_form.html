@@ -1,0 +1,222 @@
+{% extends "pokemane/base.html" %}
+
+{% block title %}{{ page_title }} | ポケマネ{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>{{ page_title }}</h1>
+        <p>型の基本情報と技を登録します。</p>
+    </div>
+
+    <a class="secondary-button" href="{% url 'pokemane:set_list' %}">型一覧へ戻る</a>
+</section>
+
+<form method="post" class="set-form-card">
+    {% csrf_token %}
+
+    <section class="form-section">
+        <h2>基本情報</h2>
+
+        <div class="form-grid two-columns">
+            <div class="form-field">
+                <label>ポケモン</label>
+                <select name="pokemon" required>
+                    <option value="">選択してください</option>
+                    {% for pokemon in pokemons %}
+                        <option
+                            value="{{ pokemon.id }}"
+                            {% if pokemon_set and pokemon_set.pokemon_id == pokemon.id %}selected{% endif %}
+                        >
+                            {% if pokemon.national_dex_no %}No.{{ pokemon.national_dex_no }} {% endif %}
+                            {{ pokemon.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>型名</label>
+                <input
+                    type="text"
+                    name="set_name"
+                    value="{% if pokemon_set %}{{ pokemon_set.set_name }}{% endif %}"
+                    required
+                    placeholder="例：スカーフ対面型"
+                >
+            </div>
+
+            <div class="form-field">
+                <label>特性</label>
+                <input
+                    type="text"
+                    name="ability_name"
+                    value="{% if pokemon_set %}{{ pokemon_set.ability_name }}{% endif %}"
+                    required
+                    placeholder="例：さめはだ"
+                >
+            </div>
+
+            <div class="form-field">
+                <label>持ち物名</label>
+                <input
+                    type="text"
+                    name="custom_item_name"
+                    value="{% if pokemon_set %}{{ pokemon_set.custom_item_name }}{% endif %}"
+                    placeholder="例：こだわりスカーフ"
+                >
+            </div>
+        </div>
+
+        <div class="mega-form-row">
+            <label class="checkbox-label">
+                <input
+                    type="checkbox"
+                    name="is_mega_stone"
+                    {% if pokemon_set and pokemon_set.is_mega_stone %}checked{% endif %}
+                >
+                メガストーン
+            </label>
+
+            <div class="form-field">
+                <label>選択メガ進化先</label>
+                <select name="selected_mega_evolution">
+                    <option value="">なし</option>
+                    {% for mega in mega_evolutions %}
+                        <option
+                            value="{{ mega.id }}"
+                            {% if pokemon_set and pokemon_set.selected_mega_evolution_id == mega.id %}selected{% endif %}
+                        >
+                            {{ mega.base_pokemon.name }} → {{ mega.mega_pokemon.name }}
+                            {% if mega.form_name %}（{{ mega.form_name }}）{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <h2>性格補正・能力ポイント</h2>
+
+        <div class="form-grid two-columns">
+            <div class="form-field">
+                <label>上昇補正</label>
+                <select name="nature_up">
+                    {% for value, label in nature_stat_choices %}
+                        <option
+                            value="{{ value }}"
+                            {% if pokemon_set and pokemon_set.nature_up == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>下降補正</label>
+                <select name="nature_down">
+                    {% for value, label in nature_stat_choices %}
+                        <option
+                            value="{{ value }}"
+                            {% if pokemon_set and pokemon_set.nature_down == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="points-grid">
+            <div class="form-field">
+                <label>HP</label>
+                <input type="number" name="point_hp" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_hp }}{% else %}0{% endif %}">
+            </div>
+            <div class="form-field">
+                <label>攻撃</label>
+                <input type="number" name="point_attack" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_attack }}{% else %}0{% endif %}">
+            </div>
+            <div class="form-field">
+                <label>防御</label>
+                <input type="number" name="point_defense" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_defense }}{% else %}0{% endif %}">
+            </div>
+            <div class="form-field">
+                <label>特攻</label>
+                <input type="number" name="point_sp_attack" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_sp_attack }}{% else %}0{% endif %}">
+            </div>
+            <div class="form-field">
+                <label>特防</label>
+                <input type="number" name="point_sp_defense" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_sp_defense }}{% else %}0{% endif %}">
+            </div>
+            <div class="form-field">
+                <label>素早</label>
+                <input type="number" name="point_speed" min="0" max="32" value="{% if pokemon_set %}{{ pokemon_set.point_speed }}{% else %}0{% endif %}">
+            </div>
+        </div>
+
+        <p class="form-help">能力ポイントは各ステータス最大32、合計66までです。</p>
+    </section>
+
+    <section class="form-section">
+        <h2>技</h2>
+
+        <div class="move-form-grid">
+            {% for move in move_rows %}
+                <div class="move-form-row">
+                    <div class="move-number">技{{ move.number }}</div>
+
+                    <div class="form-field">
+                        <label>技名</label>
+                        <input
+                            type="text"
+                            name="move_name_{{ move.number }}"
+                            value="{{ move.move_name }}"
+                            placeholder="例：じしん"
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <label>タイプ</label>
+                        <select name="move_type_{{ move.number }}">
+                            {% for type_name in type_choices %}
+                                <option value="{{ type_name }}" {% if move.move_type == type_name %}selected{% endif %}>
+                                    {{ type_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>分類</label>
+                        <select name="move_category_{{ move.number }}">
+                            {% for value, label in move_category_choices %}
+                                <option value="{{ value }}" {% if move.move_category == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="form-section">
+        <h2>メモ</h2>
+
+        <textarea
+            name="memo"
+            rows="4"
+            class="set-memo-input"
+            placeholder="調整意図、使用感、注意点など"
+        >{% if pokemon_set %}{{ pokemon_set.memo }}{% endif %}</textarea>
+    </section>
+
+    <div class="form-actions">
+        <button type="submit" class="primary-button">保存</button>
+        <a class="secondary-button" href="{% url 'pokemane:set_list' %}">キャンセル</a>
+    </div>
+</form>
+{% endblock %}
