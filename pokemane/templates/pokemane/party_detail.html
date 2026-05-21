@@ -16,9 +16,16 @@
     </div>
 </section>
 
-<section class="party-detail-card">
+<section class="party-detail-card party-edit-card">
     <form method="post" class="party-edit-form">
         {% csrf_token %}
+
+        <div class="party-edit-header">
+            <div>
+                <h2>パーティー情報</h2>
+                <p>構築名とメモを編集できます。</p>
+            </div>
+        </div>
 
         <div class="party-edit-grid">
             <div>

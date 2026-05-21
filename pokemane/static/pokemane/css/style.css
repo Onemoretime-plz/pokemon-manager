@@ -1161,3 +1161,393 @@ a {
     margin: 4px 0 0;
     font-size: 12px;
 }
+
+/* =========================
+   UI polish: common forms
+========================= */
+
+.form-section,
+.party-detail-card,
+.diagnosis-card,
+.party-card,
+.set-card {
+    box-sizing: border-box;
+}
+
+.form-section {
+    padding: 22px;
+}
+
+.form-section h2,
+.party-edit-header h2 {
+    letter-spacing: 0.02em;
+}
+
+.form-field label,
+.detail-label {
+    letter-spacing: 0.04em;
+}
+
+.form-field input,
+.form-field select,
+.set-memo-input,
+.party-name-input,
+.party-memo-input,
+.search-input {
+    min-height: 44px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.set-memo-input:focus,
+.party-name-input:focus,
+.party-memo-input:focus,
+.search-input:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.22);
+}
+
+.primary-button,
+.secondary-button,
+.danger-button,
+.mega-toggle-button {
+    min-height: 38px;
+    user-select: none;
+}
+
+/* =========================
+   Set form layout
+========================= */
+
+.set-form-layout {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.set-form-main-section {
+    border-top: 4px solid #2563eb;
+}
+
+.stat-form-section {
+    border-top: 4px solid #10b981;
+}
+
+.move-section {
+    border-top: 4px solid #f59e0b;
+}
+
+.form-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #111827;
+}
+
+.form-section h2::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 22px;
+    border-radius: 999px;
+    background: #2563eb;
+}
+
+.stat-form-section h2::before {
+    background: #10b981;
+}
+
+.move-section h2::before {
+    background: #f59e0b;
+}
+
+.form-field input,
+.form-field select,
+.set-memo-input {
+    color: #111827;
+}
+
+.form-field select {
+    cursor: pointer;
+}
+
+.points-grid .form-field input {
+    text-align: center;
+    font-weight: 700;
+}
+
+.move-form-row {
+    padding: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+}
+
+.move-number {
+    justify-content: center;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #3730a3;
+    font-size: 13px;
+}
+
+/* =========================
+   Party edit top area
+========================= */
+
+.party-edit-card {
+    border-top: 4px solid #2563eb;
+}
+
+.party-edit-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.party-edit-header h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #111827;
+}
+
+.party-edit-header p {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.party-edit-grid {
+    gap: 16px;
+}
+
+.party-name-input {
+    font-size: 24px;
+    font-weight: 800;
+    padding: 12px 14px;
+}
+
+.party-memo-input {
+    line-height: 1.6;
+}
+
+.party-edit-actions .primary-button {
+    min-width: 112px;
+}
+
+/* =========================
+   Responsive base
+========================= */
+
+@media (max-width: 1024px) {
+    .page-container {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .party-detail-slot-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    .party-slot-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 760px) {
+    .page-heading {
+        display: grid;
+        gap: 14px;
+    }
+
+    .page-heading h1 {
+        font-size: 26px;
+        line-height: 1.2;
+    }
+
+    .heading-actions {
+        flex-wrap: wrap;
+    }
+
+    .heading-actions a,
+    .heading-actions button,
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .toolbar {
+        display: grid;
+        gap: 10px;
+    }
+
+    .toolbar .search-input,
+    .toolbar select,
+    .toolbar button,
+    .toolbar a {
+        width: 100%;
+    }
+
+    .two-columns,
+    .mega-form-row,
+    .points-grid,
+    .move-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-section {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .set-form-layout {
+        max-width: 100%;
+    }
+
+    .move-form-row {
+        gap: 12px;
+    }
+
+    .move-number {
+        width: fit-content;
+        min-width: 64px;
+        height: 32px;
+        padding: 0 12px;
+    }
+
+    .party-detail-slot-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .party-slot-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .party-edit-header {
+        display: block;
+    }
+
+    .party-name-input {
+        font-size: 20px;
+    }
+
+    .section-title-row {
+        display: grid;
+        gap: 6px;
+    }
+
+    .diagnosis-title-row .small-button {
+        width: 100%;
+    }
+
+    .stats-row,
+    .stats-label-row {
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 6px;
+    }
+
+    .modal-backdrop {
+        align-items: stretch;
+        padding: 12px;
+    }
+
+    .modal-panel {
+        max-height: calc(100vh - 24px);
+        width: 100%;
+        border-radius: 18px;
+    }
+
+    .modal-set-option {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .modal-set-sub {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .site-header {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .site-nav {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .site-nav a {
+        text-align: center;
+        padding: 8px;
+        border-radius: 10px;
+        background: #f8fafc;
+    }
+
+    .page-heading h1 {
+        font-size: 23px;
+    }
+
+    .party-slot-row {
+        grid-template-columns: 1fr;
+    }
+
+    .set-card-header {
+        align-items: flex-start;
+    }
+
+    .pokemon-icon,
+    .pokemon-icon.placeholder {
+        width: 56px;
+        height: 56px;
+    }
+
+    .pokemon-name-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .stats-row,
+    .stats-label-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .diagnosis-icon-row,
+    .diagnosis-chip-row,
+    .weak-set-icons {
+        gap: 8px;
+    }
+
+    .target-chip,
+    .small-set-chip,
+    .type-badge {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .offensive-gap-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .form-actions {
+        display: grid;
+    }
+
+    .form-actions .primary-button,
+    .form-actions .secondary-button {
+        width: 100%;
+    }
+}

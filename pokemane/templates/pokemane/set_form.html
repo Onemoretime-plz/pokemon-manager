@@ -13,11 +13,11 @@
     <a class="secondary-button" href="{% url 'pokemane:set_list' %}">型一覧へ戻る</a>
 </section>
 
-<form method="post" class="set-form-card">
+<form method="post" class="set-form-card set-form-layout">
     {% csrf_token %}
 
-    <section class="form-section">
-        <h2>基本情報</h2>
+    <section class="form-section set-form-main-section">
+      <h2>基本情報</h2>
 
         <div class="form-grid two-columns">
             <div class="form-field">
@@ -95,8 +95,8 @@
         </div>
     </section>
 
-    <section class="form-section">
-        <h2>性格補正・能力ポイント</h2>
+    <section class="form-section stat-form-section">
+      <h2>性格補正・能力ポイント</h2>
 
         <div class="form-grid two-columns">
             <div class="form-field">
@@ -158,8 +158,8 @@
         <p class="form-help">能力ポイントは各ステータス最大32、合計66までです。</p>
     </section>
 
-    <section class="form-section">
-        <h2>技</h2>
+    <section class="form-section move-section">
+      <h2>技</h2>
 
         <div class="move-form-grid">
             {% for move in move_rows %}
