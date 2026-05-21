@@ -150,6 +150,74 @@ function handlePokemonChange() {
     updateMegaOptions();
 }
 
+function updatePokemonIconPreview(selectElement) {
+    const iconTargetId = selectElement.dataset.iconTarget;
+
+    if (!iconTargetId) {
+        return;
+    }
+
+    const iconElement = document.getElementById(iconTargetId);
+
+    if (!iconElement) {
+        return;
+    }
+
+    const iconBox = iconElement.closest(".selected-pokemon-icon-box");
+    const placeholder = iconBox
+        ? iconBox.querySelector(".selected-pokemon-icon-placeholder")
+        : null;
+
+    const pokemonId = selectElement.value;
+    const iconMap = window.POKEMANE_POKEMON_ICONS || {};
+    const pokemonData = iconMap[pokemonId];
+
+    if (!pokemonId) {
+        iconElement.classList.add("hidden");
+        iconElement.removeAttribute("src");
+        iconElement.alt = "";
+
+        if (placeholder) {
+            placeholder.classList.add("hidden");
+        }
+
+        return;
+    }
+
+    if (!pokemonData || !pokemonData.icon_url) {
+        iconElement.classList.add("hidden");
+        iconElement.removeAttribute("src");
+        iconElement.alt = "";
+
+        if (placeholder) {
+            placeholder.classList.remove("hidden");
+        }
+
+        return;
+    }
+
+    iconElement.src = pokemonData.icon_url;
+    iconElement.alt = pokemonData.name;
+    iconElement.classList.remove("hidden");
+
+    if (placeholder) {
+        placeholder.classList.add("hidden");
+    }
+}
+
+function initializePokemonIconPreviews() {
+    const selects = document.querySelectorAll(".pokemon-icon-select");
+
+    selects.forEach((selectElement) => {
+        updatePokemonIconPreview(selectElement);
+
+        selectElement.addEventListener("change", () => {
+            updatePokemonIconPreview(selectElement);
+        });
+    });
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const pokemonSelect = document.getElementById("pokemon-select");
     const megaCheckbox = document.getElementById("mega-stone-checkbox");
@@ -157,6 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateAbilityOptions();
     updateMegaOptions();
+    initializePokemonIconPreviews();
 
     if (pokemonSelect) {
         pokemonSelect.addEventListener("change", handlePokemonChange);

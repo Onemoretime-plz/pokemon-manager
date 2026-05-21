@@ -699,6 +699,13 @@ def set_form(request, set_id=None):
 
     pokemon_ability_map = {}
     pokemon_mega_map = {}
+    pokemon_icon_map = {}
+
+    for pokemon in pokemons:
+        pokemon_icon_map[str(pokemon.id)] = {
+            "name": pokemon.name,
+            "icon_url": pokemon.icon_image.url if pokemon.icon_image else "",
+        }
 
     for pokemon in pokemons:
         abilities = pokemon.ability_options()
@@ -733,6 +740,7 @@ def set_form(request, set_id=None):
         "matchup_method_choices": get_matchup_method_choices_for_template(),
         "matchup_rows": build_matchup_form_rows(pokemon_set),
         "weak_matchup_rows": build_weak_matchup_form_rows(pokemon_set),
+        "pokemon_icon_map_json": json.dumps(pokemon_icon_map, ensure_ascii=False),
     }
 
     return render(request, "pokemane/set_form.html", context)
