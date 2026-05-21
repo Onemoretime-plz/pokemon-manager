@@ -247,12 +247,6 @@ a {
     font-size: 13px;
 }
 
-.card-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 14px;
-    font-size: 14px;
-}
 
 /* Type colors */
 .type-normal { background-color: #9fa19f; }
@@ -1799,5 +1793,57 @@ a {
 @media (max-width: 900px) {
     .three-columns {
         grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================
+   Card action buttons alignment
+========================= */
+
+.card-actions .secondary-button,
+.card-actions .danger-button,
+.card-actions .small-button,
+.card-actions .small-delete-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 34px;
+    min-height: 34px;
+    padding: 0 12px;
+    line-height: 1;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+.card-actions .inline-delete-form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+.card-actions .inline-delete-form button {
+    height: 34px;
+    min-height: 34px;
+}
+
+@media (max-width: 480px) {
+    .card-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .card-actions a,
+    .card-actions button,
+    .card-actions .inline-delete-form {
+        width: 100%;
+    }
+
+    .card-actions .inline-delete-form button {
+        width: 100%;
     }
 }

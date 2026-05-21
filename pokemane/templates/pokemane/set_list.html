@@ -103,7 +103,10 @@
             </div>
 
             <div class="card-actions">
-                <a href="{% url 'pokemane:set_edit' card.set.id %}">編集</a>
+                <a class="secondary-button small-button" href="{% url 'pokemane:set_edit' card.set.id %}">
+                    編集
+                </a>
+
                 <form
                     method="post"
                     action="{% url 'pokemane:set_delete' card.set.id %}"
