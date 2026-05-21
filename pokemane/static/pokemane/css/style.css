@@ -997,3 +997,39 @@ a {
 .hidden {
     display: none !important;
 }
+
+.party-edit-form {
+    display: grid;
+    gap: 14px;
+}
+
+.party-edit-grid {
+    display: grid;
+    gap: 14px;
+}
+
+.party-name-input,
+.party-memo-input {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.party-name-input {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.party-memo-input {
+    resize: vertical;
+    min-height: 84px;
+}
+
+.party-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+}

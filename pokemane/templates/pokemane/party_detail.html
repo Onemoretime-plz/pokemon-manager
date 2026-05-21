@@ -17,21 +17,38 @@
 </section>
 
 <section class="party-detail-card">
-    <div class="party-detail-header">
-        <div>
-            <div class="detail-label">パーティー名</div>
-            <h2>{{ party.name }}</h2>
-        </div>
-    </div>
+    <form method="post" class="party-edit-form">
+        {% csrf_token %}
 
-    <div class="party-memo-block">
-        <div class="detail-label">備考</div>
-        {% if party.memo %}
-            <p>{{ party.memo }}</p>
-        {% else %}
-            <p class="empty-text">備考なし</p>
-        {% endif %}
-    </div>
+        <div class="party-edit-grid">
+            <div>
+                <label class="detail-label" for="party-name-input">パーティー名</label>
+                <input
+                    type="text"
+                    id="party-name-input"
+                    name="name"
+                    value="{{ party.name }}"
+                    class="party-name-input"
+                    required
+                >
+            </div>
+
+            <div>
+                <label class="detail-label" for="party-memo-input">備考</label>
+                <textarea
+                    id="party-memo-input"
+                    name="memo"
+                    class="party-memo-input"
+                    rows="3"
+                    placeholder="構築意図・課題・メモなど"
+                >{{ party.memo }}</textarea>
+            </div>
+        </div>
+
+        <div class="party-edit-actions">
+            <button type="submit" class="primary-button">保存</button>
+        </div>
+    </form>
 </section>
 
 <section class="party-slots-section">
@@ -242,5 +259,5 @@
     window.POKEMANE_CLEAR_SLOT_API_URL = "{% url 'pokemane:clear_party_slot_api' party.id %}";
     window.POKEMANE_SET_SLOT_API_URL = "{% url 'pokemane:set_party_slot_api' party.id %}";
 </script>
-<script src="{% static 'pokemane/js/party_detail.js' %}?v=8"></script>
+<script src="{% static 'pokemane/js/party_detail.js' %}?v=9"></script>
 {% endblock %}

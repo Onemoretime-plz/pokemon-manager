@@ -317,6 +317,11 @@ def party_detail(request, party_id):
         id=party_id,
     )
 
+    if request.method == "POST":
+        party.name = request.POST.get("name", "").strip() or party.name
+        party.memo = request.POST.get("memo", "").strip()
+        party.save(update_fields=["name", "memo", "updated_at"])
+
     slot_cards = []
 
     for index, pokemon_set in enumerate(party.slots(), start=1):

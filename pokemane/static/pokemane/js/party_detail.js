@@ -1,4 +1,3 @@
-console.log("party_detail.js file loaded");
 
 function getCookie(name) {
     const cookies = document.cookie ? document.cookie.split(";") : [];
@@ -369,7 +368,6 @@ function toggleMegaState(button) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOMContentLoaded fired");
 
     const refreshButton = document.getElementById("refresh-diagnosis-button");
 
@@ -378,7 +376,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const clearSlotButtons = document.querySelectorAll(".clear-slot-button");
-    console.log("clearSlotButtons:", clearSlotButtons.length);
 
     clearSlotButtons.forEach((button) => {
         button.addEventListener("click", () => {
@@ -387,21 +384,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const emptySlots = document.querySelectorAll(".selectable-empty-slot");
-    console.log("emptySlots:", emptySlots.length);
 
     emptySlots.forEach((slot) => {
         slot.addEventListener("click", () => {
-            console.log("empty slot clicked:", slot.dataset.slotNumber);
             openSetSelectModal(slot.dataset.slotNumber);
         });
     });
 
     const megaToggleButtons = document.querySelectorAll(".mega-toggle-button");
-    console.log("megaToggleButtons:", megaToggleButtons.length);
 
     megaToggleButtons.forEach((button) => {
         button.addEventListener("click", () => {
-            console.log("mega toggle clicked:", button.dataset.slotNumber);
             toggleMegaState(button);
         });
     });
@@ -423,7 +416,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const setOptions = document.querySelectorAll(".modal-set-option");
-    console.log("setOptions:", setOptions.length);
 
     setOptions.forEach((option) => {
         option.addEventListener("click", () => {
