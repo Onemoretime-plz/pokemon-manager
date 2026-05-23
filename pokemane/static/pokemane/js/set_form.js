@@ -578,6 +578,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const addMatchupButton = document.getElementById("add-matchup-row-button");
     const addWeakMatchupButton = document.getElementById("add-weak-matchup-row-button");
 
+
     updateAbilityOptions();
     updateMegaOptions();
     initializePokemonIconPreviews();
