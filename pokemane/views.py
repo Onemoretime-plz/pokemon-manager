@@ -656,76 +656,63 @@ def set_form(request, set_id=None):
             )
 
 
-                # 役割対象を再作成する。
-        pokemon_set.matchups.all().delete()
+            # 役割対象を再作成する。
+            pokemon_set.matchups.all().delete()
 
-        matchup_count = int(request.POST.get("matchup_count") or 0)
+            matchup_count = int(request.POST.get("matchup_count") or 0)
+            seen_matchup_keys = set()
 
-        for number in range(1, matchup_count + 1):
-            target_pokemon_id = request.POST.get(f"matchup_target_{number}", "")
-            method = request.POST.get(f"matchup_method_{number}", "face_to_face")
-            memo = request.POST.get(f"matchup_memo_{number}", "").strip()
+            for number in range(1, matchup_count + 1):
+                target_pokemon_id = request.POST.get(f"matchup_target_{number}", "")
+                method = request.POST.get(f"matchup_method_{number}", "face_to_face")
+                memo = request.POST.get(f"matchup_memo_{number}", "").strip()
 
-            if not target_pokemon_id:
-                continue
+                if not target_pokemon_id:
+                    continue
 
-            target_pokemon = get_object_or_404(Pokemon, id=target_pokemon_id)
+                # 同じ対象・同じ遂行方法の重複保存を防ぐ
+                matchup_key = (target_pokemon_id, method)
 
-            Matchup.objects.create(
-                pokemon_set=pokemon_set,
-                target_pokemon=target_pokemon,
-                method=method,
-                memo=memo,
-            )
-            method = request.POST.get(f"matchup_method_{number}", "face_to_face")
-            memo = request.POST.get(f"matchup_memo_{number}", "").strip()
+                if matchup_key in seen_matchup_keys:
+                    continue
 
-            if not target_pokemon_id:
-                continue
+                seen_matchup_keys.add(matchup_key)
 
-            target_pokemon = get_object_or_404(Pokemon, id=target_pokemon_id)
+                target_pokemon = get_object_or_404(Pokemon, id=target_pokemon_id)
 
-            Matchup.objects.create(
-                pokemon_set=pokemon_set,
-                target_pokemon=target_pokemon,
-                method=method,
-                memo=memo,
-            )
+                Matchup.objects.create(
+                    pokemon_set=pokemon_set,
+                    target_pokemon=target_pokemon,
+                    method=method,
+                    memo=memo,
+                )
 
-        # 苦手対象を再作成する。
-        pokemon_set.weak_matchups.all().delete()
+            # 苦手対象を再作成する。
+            pokemon_set.weak_matchups.all().delete()
 
-        weak_matchup_count = int(request.POST.get("weak_matchup_count") or 0)
+            weak_matchup_count = int(request.POST.get("weak_matchup_count") or 0)
+            seen_weak_target_ids = set()
 
-        for number in range(1, weak_matchup_count + 1):
-            target_pokemon_id = request.POST.get(f"weak_target_{number}", "")
-            memo = request.POST.get(f"weak_memo_{number}", "").strip()
+            for number in range(1, weak_matchup_count + 1):
+                target_pokemon_id = request.POST.get(f"weak_target_{number}", "")
+                memo = request.POST.get(f"weak_memo_{number}", "").strip()
 
-            if not target_pokemon_id:
-                continue
+                if not target_pokemon_id:
+                    continue
 
-            target_pokemon = get_object_or_404(Pokemon, id=target_pokemon_id)
+                # 同じ苦手対象の重複保存を防ぐ
+                if target_pokemon_id in seen_weak_target_ids:
+                    continue
 
-            WeakMatchup.objects.create(
-                pokemon_set=pokemon_set,
-                target_pokemon=target_pokemon,
-                memo=memo,
-            )
-            memo = request.POST.get(f"weak_memo_{number}", "").strip()
+                seen_weak_target_ids.add(target_pokemon_id)
 
-            if not target_pokemon_id:
-                continue
+                target_pokemon = get_object_or_404(Pokemon, id=target_pokemon_id)
 
-            target_pokemon = get_object_or_404(Pokemon, id=target_pokemon_id)
-
-            WeakMatchup.objects.create(
-                pokemon_set=pokemon_set,
-                target_pokemon=target_pokemon,
-                memo=memo,
-            )
-
-
-
+                WeakMatchup.objects.create(
+                    pokemon_set=pokemon_set,
+                    target_pokemon=target_pokemon,
+                    memo=memo,
+                )
         return redirect("pokemane:set_list")
 
     pokemon_ability_map = {}
