@@ -19,21 +19,51 @@
     <section class="form-section set-form-main-section">
       <h2>基本情報</h2>
 
-        <div class="form-grid two-columns">
+        <div class="set-basic-layout">
+            <div class="form-field pokemon-filter-field">
+                <label>ポケモン検索</label>
+                <input
+                    type="text"
+                    class="pokemon-option-filter"
+                    data-filter-target="pokemon-select"
+                    placeholder="検索：ポケモン名"
+                >
+            </div>
+
             <div class="form-field">
                 <label>ポケモン</label>
-                <select name="pokemon" id="pokemon-select" required>
-                    <option value="">選択してください</option>
-                    {% for pokemon in pokemons %}
-                        <option
-                            value="{{ pokemon.id }}"
-                            {% if pokemon_set and pokemon_set.pokemon_id == pokemon.id %}selected{% endif %}
+
+                <div class="pokemon-select-with-icon">
+                    <select
+                        name="pokemon"
+                        id="pokemon-select"
+                        class="pokemon-icon-select filterable-pokemon-select"
+                        data-icon-target="selected-set-pokemon-icon"
+                        required
+                    >
+                        <option value="">選択してください</option>
+                        {% for pokemon in target_pokemons %}
+                            <option
+                                value="{{ pokemon.id }}"
+                                data-search-text="{{ pokemon.name }} {% if pokemon.national_dex_no %}{{ pokemon.national_dex_no }}{% endif %}"
+                                {% if pokemon_set and pokemon_set.pokemon_id == pokemon.id %}selected{% endif %}
+                            >
+                                {% if pokemon.national_dex_no %}No.{{ pokemon.national_dex_no }} {% endif %}
+                                {{ pokemon.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="selected-pokemon-icon-box">
+                        <img
+                            id="selected-set-pokemon-icon"
+                            class="selected-pokemon-icon hidden"
+                            src=""
+                            alt=""
                         >
-                            {% if pokemon.national_dex_no %}No.{{ pokemon.national_dex_no }} {% endif %}
-                            {{ pokemon.name }}
-                        </option>
-                    {% endfor %}
-                </select>
+                        <span class="selected-pokemon-icon-placeholder hidden">No Image</span>
+                    </div>
+                </div>
             </div>
 
             <div class="form-field">
@@ -68,10 +98,8 @@
                     placeholder="例：こだわりスカーフ"
                 >
             </div>
-        </div>
 
-        <div class="mega-form-row">
-            <label class="checkbox-label">
+            <label class="checkbox-label mega-checkbox-field">
                 <input
                     type="checkbox"
                     name="is_mega_stone"
@@ -667,5 +695,5 @@
     window.POKEMANE_POKEMON_ICONS = {{ pokemon_icon_map_json|safe }};
     window.POKEMANE_POKEMON_STATS = {{ pokemon_stats_map_json|safe }};
 </script>
-<script src="{% static 'pokemane/js/set_form.js' %}?v=11"></script>
-{% endblock %}
+<script src="{% static 'pokemane/js/set_form.js' %}?v=13"></script>
+{% endblock %}py

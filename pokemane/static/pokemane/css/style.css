@@ -1900,3 +1900,43 @@ a {
     border-color: #60a5fa;
     box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
 }
+
+/* =========================
+   Set form basic info layout
+========================= */
+
+.set-basic-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px 18px;
+    align-items: end;
+}
+
+.set-basic-layout .pokemon-filter-field {
+    grid-column: 1 / -1;
+}
+
+.set-basic-layout .mega-checkbox-field {
+    min-height: 44px;
+    align-self: end;
+    padding: 0 2px;
+}
+
+.set-basic-layout .pokemon-select-with-icon {
+    grid-template-columns: minmax(0, 1fr) 56px;
+}
+
+.set-basic-layout .selected-pokemon-icon-box {
+    width: 56px;
+    height: 44px;
+}
+
+@media (max-width: 760px) {
+    .set-basic-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .set-basic-layout .pokemon-filter-field {
+        grid-column: auto;
+    }
+}
