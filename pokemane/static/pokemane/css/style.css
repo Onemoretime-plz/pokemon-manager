@@ -1940,3 +1940,68 @@ a {
         grid-column: auto;
     }
 }
+
+/* =========================
+   Virtual target reference box
+========================= */
+
+.virtual-target-section {
+    border-top: 4px solid #06b6d4;
+}
+
+.virtual-target-section h2::before {
+    background: #06b6d4;
+}
+
+.virtual-target-icon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.virtual-target-icon-item {
+    width: 54px;
+    height: 54px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.virtual-target-icon {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+}
+
+.virtual-target-no-image {
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.1;
+    border-radius: 10px;
+    padding: 4px;
+}
+
+@media (max-width: 480px) {
+    .virtual-target-icon-grid {
+        gap: 8px;
+    }
+
+    .virtual-target-icon-item {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+    }
+
+    .virtual-target-icon {
+        width: 40px;
+        height: 40px;
+    }
+}

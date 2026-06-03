@@ -516,6 +516,40 @@
     </div>
 </template>
 
+
+<section class="form-section virtual-target-section">
+    <h2>仮想敵</h2>
+    <p class="form-help">
+        仮想敵フラグがONのポケモンです。役割対象・苦手対象を登録する際の確認用です。
+    </p>
+
+    {% if virtual_target_pokemons %}
+        <div class="virtual-target-icon-grid">
+            {% for pokemon in virtual_target_pokemons %}
+                <div
+                    class="virtual-target-icon-item"
+                    title="{% if pokemon.national_dex_no %}No.{{ pokemon.national_dex_no }} {% endif %}{{ pokemon.name }}"
+                >
+                    {% if pokemon.icon_image %}
+                        <img
+                            src="{{ pokemon.icon_image.url }}"
+                            alt="{{ pokemon.name }}"
+                            class="virtual-target-icon"
+                        >
+                    {% else %}
+                        <div class="virtual-target-icon virtual-target-no-image">
+                            No Image
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-text">仮想敵フラグがONのポケモンはまだ登録されていません。</p>
+    {% endif %}
+</section>
+
+
 <section class="form-section weak-matchup-section">
     <h2>苦手対象</h2>
     <p class="form-help">この型が比較的苦手とする相手ポケモンを登録します。</p>
@@ -695,5 +729,5 @@
     window.POKEMANE_POKEMON_ICONS = {{ pokemon_icon_map_json|safe }};
     window.POKEMANE_POKEMON_STATS = {{ pokemon_stats_map_json|safe }};
 </script>
-<script src="{% static 'pokemane/js/set_form.js' %}?v=13"></script>
+<script src="{% static 'pokemane/js/set_form.js' %}?v=14"></script>
 {% endblock %}py

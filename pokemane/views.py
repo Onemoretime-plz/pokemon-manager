@@ -596,6 +596,9 @@ def set_form(request, set_id=None):
         "base_pokemon",
         "mega_pokemon",
     ).order_by("base_pokemon__national_dex_no", "base_pokemon__name")
+    virtual_target_pokemons = Pokemon.objects.filter(
+        is_virtual_target=True
+    ).order_by("name", "national_dex_no")
 
     if request.method == "POST":
         pokemon_id = request.POST.get("pokemon")
@@ -760,6 +763,7 @@ def set_form(request, set_id=None):
         "pokemon_set": pokemon_set,
         "pokemons": pokemons,
         "target_pokemons": target_pokemons,
+        "virtual_target_pokemons": virtual_target_pokemons,
         "mega_evolutions": mega_evolutions,
         "type_choices": get_type_choices_for_template(),
         "nature_stat_choices": get_nature_stat_choices_for_template(),
