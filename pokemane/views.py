@@ -598,7 +598,7 @@ def set_form(request, set_id=None):
     ).order_by("base_pokemon__national_dex_no", "base_pokemon__name")
     virtual_target_pokemons = Pokemon.objects.filter(
         is_virtual_target=True
-    ).order_by("name", "national_dex_no")
+    ).order_by("national_dex_no","name")
 
     if request.method == "POST":
         pokemon_id = request.POST.get("pokemon")
