@@ -1,0 +1,41 @@
+{% extends "pokemane/base.html" %}
+
+{% block title %}ログイン | ポケマネ{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+    <div class="auth-header">
+        <h1>ログイン</h1>
+        <p>ポケマネにログインします。</p>
+    </div>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-field">
+            <label for="{{ form.username.id_for_label }}">ユーザー名</label>
+            {{ form.username }}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.password.id_for_label }}">パスワード</label>
+            {{ form.password }}
+        </div>
+
+        <button type="submit" class="primary-button auth-submit-button">
+            ログイン
+        </button>
+    </form>
+
+    <p class="auth-footer-text">
+        アカウントがない場合は
+        <a href="{% url 'accounts:signup' %}">新規登録</a>
+    </p>
+</section>
+{% endblock %}

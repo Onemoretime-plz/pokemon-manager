@@ -8,6 +8,27 @@
 </head>
 <body>
     <header class="site-header">
+        <div class="auth-nav">
+            {% if request.user.is_authenticated %}
+                <span class="login-user-label">
+                    {{ request.user.username }}
+                </span>
+
+                <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="secondary-button small-button">
+                        ログアウト
+                    </button>
+                </form>
+            {% else %}
+                <a class="secondary-button small-button" href="{% url 'accounts:login' %}">
+                    ログイン
+                </a>
+                <a class="primary-button small-button" href="{% url 'accounts:signup' %}">
+                    新規登録
+                </a>
+            {% endif %}
+        </div>
         <div class="site-title">ポケマネ</div>
         <nav class="site-nav">
             <a href="{% url 'pokemane:pokemon_list' %}">実装ポケモン</a>

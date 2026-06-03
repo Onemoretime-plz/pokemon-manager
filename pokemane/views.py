@@ -10,6 +10,7 @@ from .services.diagnosis import diagnose_party, diagnose_slots
 from .services.stats import build_stats_summary, get_effective_pokemon
 from .services.type_styles import get_type_class
 
+from django.contrib.auth.decorators import login_required
 
 
 SORT_LABELS = {
@@ -109,6 +110,7 @@ def build_set_card_data(pokemon_set, mega_active=True):
         },
     }
 
+@login_required
 def set_list(request):
     query = request.GET.get("q", "").strip()
     sort = request.GET.get("sort", "pokemon_name")
@@ -256,7 +258,7 @@ def build_party_card_data(party):
         "slots": slots,
     }
 
-
+@login_required
 def party_list(request):
     query = request.GET.get("q", "").strip()
 
@@ -291,6 +293,7 @@ def party_list(request):
 
     return render(request, "pokemane/party_list.html", context)
 
+@login_required
 def party_detail(request, party_id):
     party = get_object_or_404(
         Party.objects.select_related(
@@ -407,7 +410,7 @@ def diagnosis_slots_api(request):
         }
     )
 
-
+@login_required
 @require_POST
 def clear_party_slot_api(request, party_id):
     """
@@ -447,6 +450,7 @@ def clear_party_slot_api(request, party_id):
         }
     )
 
+@login_required
 @require_POST
 def set_party_slot_api(request, party_id):
     """
@@ -570,6 +574,7 @@ def build_move_form_rows(pokemon_set=None):
 
     return rows
 
+@login_required
 def set_form(request, set_id=None):
     """
     型の新規登録・編集画面。
@@ -851,6 +856,7 @@ def set_delete(request, set_id):
 
     return redirect("pokemane:set_list")
 
+@login_required
 @require_POST
 def party_delete(request, party_id):
     party = get_object_or_404(Party, id=party_id)
@@ -912,6 +918,7 @@ def pokemon_form(request, pokemon_id=None):
 
     return render(request, "pokemane/pokemon_form.html", context)
 
+@login_required
 @require_POST
 def pokemon_delete(request, pokemon_id):
     pokemon = get_object_or_404(Pokemon, id=pokemon_id)
@@ -919,6 +926,7 @@ def pokemon_delete(request, pokemon_id):
 
     return redirect("pokemane:pokemon_list")
 
+@login_required
 @require_POST
 def move_party_slot_api(request, party_id):
     """
