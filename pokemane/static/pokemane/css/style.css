@@ -1940,68 +1940,82 @@ a {
         grid-column: auto;
     }
 }
-
 /* =========================
    Virtual target reference box
 ========================= */
 
-.virtual-target-section {
-    border-top: 4px solid #06b6d4;
-}
-
-.virtual-target-section h2::before {
-    background: #06b6d4;
-}
-
 .virtual-target-icon-grid {
+    width: 100%;
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
-    gap: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
     margin-top: 14px;
 }
 
 .virtual-target-icon-item {
     width: 54px;
     height: 54px;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    background: #ffffff;
+    flex: 0 0 54px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
+    padding: 0;
 }
 
 .virtual-target-icon {
-    width: 46px;
-    height: 46px;
+    width: 54px;
+    height: 54px;
     object-fit: contain;
+    display: block;
 }
 
 .virtual-target-no-image {
-    background: #f1f5f9;
+    width: 54px;
+    height: 54px;
+    background: transparent;
     color: #94a3b8;
     font-size: 9px;
     font-weight: 700;
     text-align: center;
     line-height: 1.1;
-    border-radius: 10px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
     padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (max-width: 480px) {
     .virtual-target-icon-grid {
-        gap: 8px;
+        gap: 7px;
     }
 
     .virtual-target-icon-item {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
+        flex-basis: 48px;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        padding: 0;
     }
 
     .virtual-target-icon {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .virtual-target-no-image {
+        width: 48px;
+        height: 48px;
+        font-size: 8px;
     }
 }
